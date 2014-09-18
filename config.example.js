@@ -1,4 +1,5 @@
 module.exports = {
   domain : 'provider.plp.hackers4peace.net',
-  port: '5000'
+  port: '5000',
+  profilesDir: 'data'
 };
