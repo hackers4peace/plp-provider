@@ -3,17 +3,29 @@ plp-provider
 
 Portable Linked Profile Provider. This repo will host definitions and implementations for Providers working with PLP 
 
-# What is a PLP Provider?
+## About
 
 PLP Providers store profiles. They interact with PLP-Directories, serving them profiles, and with PLP-Editors, which create/update/delete the profiles stored on them
 
-# Interface methods
+### Interface
 
 - createProfile
 - updateProfile
 - deleteProfile
 - getProfile
 
+## Setup
+
+```bash
+$ cp config.example.js config.js
+```
+
+edit *config.js* to specify your domain and port
+
+```bash
+$ npm install
+$ grunt
+```
 
 ## Unlicense
 
