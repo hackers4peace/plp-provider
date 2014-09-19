@@ -27,7 +27,7 @@ daemon.post('/', function(req, res){
       "@id": uri,
       "@type": profile["@type"]
     };
-    res.send(200, min);
+    res.json(min);
   });
 
 });
