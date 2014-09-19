@@ -9,6 +9,7 @@ PLP Providers store profiles. They interact with PLP-Directories, serving them p
 ## API
 
 Supports CORS ([Cross-Origin Resource Sharing](http://enable-cors.org/))
+
 We evaluate [Hydra](http://www.hydra-cg.com/) and [LDP](http://www.w3.org/TR/ldp/), for now simple Level-3 REST
 
 ### POST /
@@ -18,11 +19,16 @@ status: *implementing*
 creates new profile
 
 content-type: *application/ld+json* (or not recommended *application/json*)
-response: *JSON-LD object with just URI of newly created profile based on
+
+response: *JSON-LD object with URI of newly created profile based on
 provider's domain name and generated [UUID](http://en.wikipedia.org/wiki/Universally_unique_identifier)*
 
 ```js
-{ "@id": "http://domain.tld/449b829a-0fbd-420a-bbe4-70d11527d62b" }
+{
+ "@context": "http://plp.hackers4peace.net/context.jsonld",
+ "@id": "http://domain.tld/449b829a-0fbd-420a-bbe4-70d11527d62b",
+ "@type" "Person"
+}
 ```
 
 ### GET /:uuid
@@ -32,12 +38,14 @@ status: *implementing*
 gets single profile
 
 content-type: *application/ld+json* (or not recommended *application/json*)
+
 response: *JSON-LD object with full profile*
 
 ```js
 {
   "@context": "http://plp.hackers4peace.net/context.jsonld",
   "@id": "http://domain.tld/449b829a-0fbd-420a-bbe4-70d11527d62b",
+  "@type": "Person",
   "name": "Alice Wonder",
   ...
 }
