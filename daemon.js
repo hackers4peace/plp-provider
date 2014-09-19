@@ -12,16 +12,22 @@ daemon.options('*', cors());
 
 daemon.use(bodyParser.json());
 
-daemon.post('/create', function(req, res){
+daemon.post('/', function(req, res){
 
   var uuid = UUID.v4();
   var path = config.profilesDir + '/' + uuid;
   var uri = 'http://' + config.domain + '/' + uuid;
   var profile = req.body;
+  profile["@id"] = uri;
 
-  fs.writeFile(path, JSON.stringify(profile), function(err){
+  fs.writeFile(path, JSON.stringify(profile), function(err, data){
     // FIXME handle error
-    res.send(200, uri);
+    var min = {
+      "@context": profile["@context"],
+      "@id": uri,
+      "@type": profile["@type"]
+    };
+    res.send(200, min);
   });
 
 });
