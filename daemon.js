@@ -40,6 +40,6 @@ daemon.get('/:uuid', function(req, res){
   });
 });
 
-daemon.listen(config.port, function(){
-  console.log('listening on: ', config.port);
+daemon.listen(config.listenOn, function(){
+  console.log('listening on: ', config.listenOn);
 });
