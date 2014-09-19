@@ -1,17 +1,39 @@
 # PLP Service: Provider
 
-Portable Linked Profile Provider. This repo will host definitions and implementations for Providers working with PLP 
+Portable Linked Profile Provider. This repo will host definitions and implementations for Providers working with PLP
 
 ## About
 
 PLP Providers store profiles. They interact with PLP-Directories, serving them profiles, and with PLP-Editors, which create/update/delete the profiles stored on them
 
-### Interface
+## API
 
-- createProfile
-- updateProfile
-- deleteProfile
-- getProfile
+We evaluate [Hydra](http://www.hydra-cg.com/) and [LDP](http://www.w3.org/TR/ldp/), for now simple Level-3 REST
+
+### POST /
+
+status: *implementing*
+
+creates new profile
+
+### GET /:uuid
+
+status: *implementing*
+
+gets single profile
+
+### PUT /:uuid
+
+status: *planned*
+
+updates profile
+
+### DELETE /:uuid
+
+status: *planned*
+
+deletes profile
+
 
 ## Setup
 
