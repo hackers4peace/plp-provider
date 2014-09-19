@@ -18,6 +18,28 @@ status: *implementing*
 
 creates new profile
 
+request: *expects JSON-LD object with profile data* ([PLP
+Editor](https://github.com/hackers4peace/plp-editor) can
+generate them)
+
+
+```js
+{
+  "@context": "http://plp.hackers4peace.net/context.jsonld",
+  "@type": "Person",
+  "name": "Alice Wonderland",
+  "memberOf": [
+    {
+      "@id": "http://wl.tld",
+      "@type": "Organization",
+      "name": "Wonderlanderians"
+    },
+    ...
+  ],
+  ...
+ }
+```
+
 content-type: *application/ld+json* (or not recommended *application/json*)
 
 response: *JSON-LD object with URI of newly created profile based on
@@ -26,7 +48,7 @@ provider's domain name and generated [UUID](http://en.wikipedia.org/wiki/Univers
 ```js
 {
  "@context": "http://plp.hackers4peace.net/context.jsonld",
- "@id": "http://domain.tld/449b829a-0fbd-420a-bbe4-70d11527d62b",
+ "@id": "http://provider-domain.tld/449b829a-0fbd-420a-bbe4-70d11527d62b",
  "@type" "Person"
 }
 ```
@@ -37,6 +59,8 @@ status: *implementing*
 
 gets single profile
 
+request: *currently expects no parameters*
+
 content-type: *application/ld+json* (or not recommended *application/json*)
 
 response: *JSON-LD object with full profile*
@@ -44,9 +68,17 @@ response: *JSON-LD object with full profile*
 ```js
 {
   "@context": "http://plp.hackers4peace.net/context.jsonld",
-  "@id": "http://domain.tld/449b829a-0fbd-420a-bbe4-70d11527d62b",
+  "@id": "http://provider-domain.tld/449b829a-0fbd-420a-bbe4-70d11527d62b",
   "@type": "Person",
   "name": "Alice Wonder",
+  "memberOf": [
+    {
+      "@id": "http://wl.tld",
+      "@type": "Organization",
+      "name": "Wonderlanderians"
+    },
+    ...
+  ],
   ...
 }
 ```
