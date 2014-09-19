@@ -1,5 +1,4 @@
-plp-provider
-============
+# PLP Service: Provider
 
 Portable Linked Profile Provider. This repo will host definitions and implementations for Providers working with PLP 
 
