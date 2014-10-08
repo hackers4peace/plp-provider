@@ -21,13 +21,17 @@ daemon.post('/', function(req, res){
   profile["@id"] = uri;
 
   fs.writeFile(path, JSON.stringify(profile), function(err, data){
-    // FIXME handle error
-    var min = {
-      "@context": profile["@context"],
-      "@id": uri,
-      "@type": profile["@type"]
-    };
-    res.json(min);
+    if(err){
+      // TODO add error reporting
+      res.send(500);
+    } else {
+      var min = {
+        "@context": profile["@context"],
+        "@id": uri,
+        "@type": profile["@type"]
+      };
+      res.json(min);
+    }
   });
 
 });
@@ -35,8 +39,12 @@ daemon.post('/', function(req, res){
 daemon.get('/:uuid', function(req, res){
   var path = config.profilesDir + '/' + req.params.uuid;
   fs.readFile(path, function(err, data){
-    // FIXME handle error
-    res.json(data.toString());
+    if(err){
+      // TODO add error reporting
+      res.send(500);
+    } else {
+      res.json(data.toString());
+    }
   });
 });
 
