@@ -10,13 +10,14 @@ var daemon = express();
 daemon.use(cors({ origin: true }));
 daemon.options('*', cors());
 
-daemon.use(bodyParser.json());
+daemon.use(bodyParser.json({ type: 'application/ld+json' }));
 
 daemon.post('/', function(req, res){
 
   var uuid = UUID.v4();
   var path = config.profilesDir + '/' + uuid;
   var uri = 'http://' + config.domain + '/' + uuid;
+  // FIXME handle errors
   var profile = req.body;
   profile["@id"] = uri;
 
