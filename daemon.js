@@ -30,7 +30,8 @@ daemon.post('/', function(req, res){
         "@id": uri,
         "@type": profile["@type"]
       };
-      res.json(min);
+      res.type('application/ld+json');
+      res.send(min);
     }
   });
 
@@ -43,7 +44,8 @@ daemon.get('/:uuid', function(req, res){
       // TODO add error reporting
       res.send(500);
     } else {
-      res.json(data.toString());
+      res.type('application/ld+json');
+      res.send(data.toString());
     }
   });
 });
