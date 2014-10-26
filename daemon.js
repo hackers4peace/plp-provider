@@ -17,13 +17,19 @@ daemon.post('/', function(req, res){
 	var profile = req.body;
 	if (!profile) res.send(500);
 
-	var uuid = UUID.v4();
-	if (profile["about"]["@id"])
-		uuid = profile["about"]["@id"];
+	var uuid;
+	var uri;
+
+	if (profile["@id"]){
+		uri = profile["@id"];
+		uuid = uri.split("/").pop();
+	}else{
+		uuid = UUID.v4();
+		uri = 'http://' + config.domain + '/' + uuid;
+		profile["@id"] = uri;
+	}
 
 	var path = config.profilesDir + '/' + uuid;
-	var uri = 'http://' + config.domain + '/' + uuid;
-	profile["@id"] = uri;
 
 	fs.writeFile(path, JSON.stringify(profile), function(err, data){
 		if(err){
