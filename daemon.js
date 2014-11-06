@@ -14,53 +14,65 @@ daemon.use(bodyParser.json({ type: 'application/ld+json' }));
 
 daemon.post('/', function(req, res){
 
-	var profile = req.body;
-	if (!profile) res.send(500);
+  var profile = req.body;
+  if (!profile) res.send(500);
 
-	var uuid;
-	var uri;
+  var uuid;
+  var uri;
 
-	if (profile["@id"]){
-		uri = profile["@id"];
-		uuid = uri.split("/").pop();
-	}else{
-		uuid = UUID.v4();
-		uri = 'http://' + config.domain + '/' + uuid;
-		profile["@id"] = uri;
-	}
+  if (profile["@id"]){
+    uri = profile["@id"];
+    uuid = uri.split("/").pop();
+  }else{
+    uuid = UUID.v4();
+    uri = 'http://' + config.domain + '/' + uuid;
+    profile["@id"] = uri;
+  }
 
-	var path = config.profilesDir + '/' + uuid;
+  var path = config.profilesDir + '/' + uuid;
 
-	fs.writeFile(path, JSON.stringify(profile), function(err, data){
-		if(err){
-			// TODO add error reporting
-			res.send(500);
-		} else {
-			var min = {
-				"@context": profile["@context"],
-				"@id": uri,
-				"@type": profile["@type"]
-			};
-			res.type('application/ld+json');
-			res.send(min);
-		}
-	});
+  fs.writeFile(path, JSON.stringify(profile), function(err, data){
+    if(err){
+      // TODO add error reporting
+      res.send(500);
+    } else {
+      var min = {
+        "@context": profile["@context"],
+        "@id": uri,
+        "@type": profile["@type"]
+      };
+      res.type('application/ld+json');
+      res.send(min);
+    }
+  });
 
 });
 
 daemon.get('/:uuid', function(req, res){
-	var path = config.profilesDir + '/' + req.params.uuid;
-	fs.readFile(path, function(err, data){
-		if(err){
-			// TODO add error reporting
-			res.send(500);
-		} else {
-			res.type('application/ld+json');
-			res.send(data.toString());
-		}
-	});
+  var path = config.profilesDir + '/' + req.params.uuid;
+  fs.readFile(path, function(err, data){
+    if(err){
+      // TODO add error reporting
+      res.send(500);
+    } else {
+      res.type('application/ld+json');
+      res.send(data.toString());
+    }
+  });
+});
+
+daemon.delete('/:uuid', function(req, res){
+  var path = config.profilesDir + '/' + req.params.uuid;
+  fs.unlink(path, function(err, data){
+    if(err){
+      // TODO add error reporting
+      res.send(500);
+    } else {
+      res.send(200);
+    }
+  });
 });
 
 daemon.listen(config.listenOn, function(){
-	console.log('listening on: ', config.listenOn);
+  console.log('listening on: ', config.listenOn);
 });
