@@ -14,12 +14,22 @@ daemon.use(bodyParser.json({ type: 'application/ld+json' }));
 
 daemon.post('/', function(req, res){
 
-  var uuid = UUID.v4();
-  var path = config.profilesDir + '/' + uuid;
-  var uri = 'http://' + config.domain + '/' + uuid;
-  // FIXME handle errors
   var profile = req.body;
-  profile["@id"] = uri;
+  if (!profile) res.send(500);
+
+  var uuid;
+  var uri;
+
+  if (profile["@id"]){
+    uri = profile["@id"];
+    uuid = uri.split("/").pop();
+  }else{
+    uuid = UUID.v4();
+    uri = 'http://' + config.domain + '/' + uuid;
+    profile["@id"] = uri;
+  }
+
+  var path = config.profilesDir + '/' + uuid;
 
   fs.writeFile(path, JSON.stringify(profile), function(err, data){
     if(err){
@@ -47,6 +57,18 @@ daemon.get('/:uuid', function(req, res){
     } else {
       res.type('application/ld+json');
       res.send(data.toString());
+    }
+  });
+});
+
+daemon.delete('/:uuid', function(req, res){
+  var path = config.profilesDir + '/' + req.params.uuid;
+  fs.unlink(path, function(err, data){
+    if(err){
+      // TODO add error reporting
+      res.send(500);
+    } else {
+      res.send(200);
     }
   });
 });
