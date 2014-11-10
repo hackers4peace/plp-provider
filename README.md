@@ -14,9 +14,9 @@ We evaluate [Hydra](http://www.hydra-cg.com/) and [LDP](http://www.w3.org/TR/ldp
 
 ### POST /
 
-status: *implementing*
+status: *basic implementation*
 
-creates new profile
+if payload includes ```@id``` returns *HTTP 409 Conflict*, otherwise creates new profile
 
 request: *expects JSON-LD object with profile data* ([PLP
 Editor](https://github.com/hackers4peace/plp-editor) can
@@ -40,7 +40,7 @@ generate them)
  }
 ```
 
-content-type: *application/ld+json* (or not recommended *application/json*)
+content-type: *application/ld+json*
 
 response: *JSON-LD object with URI of newly created profile based on
 provider's domain name and generated [UUID](http://en.wikipedia.org/wiki/Universally_unique_identifier)*
@@ -55,13 +55,13 @@ provider's domain name and generated [UUID](http://en.wikipedia.org/wiki/Univers
 
 ### GET /:uuid
 
-status: *implementing*
+status: *basic implementation*
 
 gets single profile
 
 request: *currently expects no parameters*
 
-content-type: *application/ld+json* (or not recommended *application/json*)
+content-type: *application/ld+json*
 
 response: *JSON-LD object with full profile*
 
@@ -85,15 +85,22 @@ response: *JSON-LD object with full profile*
 
 ### PUT /:uuid
 
-status: *planned*
+status: *basic implementation*
 
 updates profile
 
+same as POST but requires payload to have an @id matching one of the
+profiles stored on this provider
+
+
 ### DELETE /:uuid
 
-status: *planned*
+status: *basic implementation*
 
 deletes profile
+
+request: *currently expects no parameters*
+response: 200 OK
 
 
 ## Setup
