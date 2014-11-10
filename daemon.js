@@ -44,25 +44,30 @@ var storage = {
 };
 
 daemon.post('/', function(req, res){
-
-  var uuid = UUID.v4();
   var profile = req.body;
-  profile["@id"] = 'http://' + config.domain + '/' + uuid;
 
-  storage.save(uuid, profile)
-    .then(function(data){
-      var min = {
-        "@context": data["@context"],
-        "@id": data["@id"],
-        "@type": data["@type"]
-      };
-      res.type('application/ld+json');
-      res.send(min);
-    })
-    .catch(function(err){
-      // TODO add error reporting
-      res.send(500);
-    });
+  // return 409 Conflict if profile includes @id
+  if(profile["@id"]) {
+    res.send(409);
+  } else {
+    var uuid = UUID.v4();
+    profile["@id"] = 'http://' + config.domain + '/' + uuid;
+
+    storage.save(uuid, profile)
+      .then(function(data){
+        var min = {
+          "@context": data["@context"],
+          "@id": data["@id"],
+          "@type": data["@type"]
+        };
+        res.type('application/ld+json');
+        res.send(min);
+      })
+      .catch(function(err){
+        // TODO add error reporting
+        res.send(500);
+      });
+    }
 });
 
 daemon.get('/:uuid', function(req, res){
