@@ -31,7 +31,16 @@ var storage = {
         resolve(content);
       });
     });
-  }
+  },
+  delete: function(uuid){
+    return new Promise(function(resolve, reject){
+      var path = config.profilesDir + '/' + uuid;
+      fs.unlink(path, function(err){
+        if(err) reject(err);
+        resolve();
+      });
+    });
+  },
 };
 
 daemon.post('/', function(req, res){
@@ -61,6 +70,30 @@ daemon.get('/:uuid', function(req, res){
     .then(function(data){
       res.type('application/ld+json');
       res.send(data.toString());
+    })
+    .catch(function(err){
+      // TODO add error reporting
+      res.send(500);
+    });
+});
+
+daemon.put('/:uuid', function(req, res){
+  // TODO add authentication
+  storage.save(req.params.uuid, req.body)
+    .then(function(){
+      res.send(200);
+    })
+    .catch(function(err){
+      // TODO add error reporting
+      res.send(500);
+    });
+});
+
+daemon.delete('/:uuid', function(req, res){
+  // TODO add authentication
+  storage.delete(req.params.uuid)
+    .then(function(){
+      res.send(200);
     })
     .catch(function(err){
       // TODO add error reporting
