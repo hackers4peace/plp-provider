@@ -103,7 +103,7 @@ request: *currently expects no parameters*
 response: 200 OK
 
 
-## Setup
+## Development
 
 ```bash
 $ cp config.example.js config.js
@@ -113,7 +113,7 @@ edit *config.js* to specify your domain and port
 
 ```bash
 $ npm install
-$ grunt
+$ npm start
 ```
 
 ## Unlicense
