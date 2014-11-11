@@ -26,7 +26,7 @@ var storage = {
   save: function(uuid, content){
     return new Promise(function(resolve, reject){
       var path = config.profilesDir + '/' + uuid;
-      fs.writeFile(path, JSON.stringify(content), function(err, data){
+      fs.writeFile(path, JSON.stringify(content), function(err){
         if(err) reject(err);
         resolve(content);
       });
@@ -78,7 +78,9 @@ daemon.get('/:uuid', function(req, res){
     })
     .catch(function(err){
       // TODO add error reporting
-      res.send(500);
+      var code = 500;
+      if(err.code === 'ENOENT') code = 404;
+      res.send(code);
     });
 });
 

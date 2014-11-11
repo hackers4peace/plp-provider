@@ -11,14 +11,27 @@ module.exports = function(grunt){
         files: ['daemon.js'],
         tasks: ['develop'],
         options: {
-          nospawn: true
+          spawn: false
         }
+      },
+      test: {
+        files: ['test/**/*.js'],
+        tasks: ['mochaTest']
       }
     },
+    mochaTest: {
+      test: {
+        options: {
+          reporter: 'spec'
+        },
+        src: ['test/**/*.js']
+      }
+    }
   });
 
   grunt.loadNpmTasks('grunt-develop');
   grunt.loadNpmTasks('grunt-contrib-watch');
+  grunt.loadNpmTasks('grunt-mocha-test');
 
   grunt.registerTask('default', ['develop', 'watch']);
 
