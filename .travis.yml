@@ -5,6 +5,7 @@ branches:
   only:
     - master
 before_script: cp config.example.js config.js
+script: npm run travis
 notifications:
   webhooks:
     urls:

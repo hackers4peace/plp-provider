@@ -2,6 +2,7 @@ var gulp = require('gulp');
 var gutil = require('gulp-util');
 var server = require('gulp-develop-server');
 var mocha = require('gulp-mocha');
+var exit = require('gulp-exit');
 
 gulp.task('server:start', function(cb) {
   server.listen( { path: 'daemon.js' }, cb);
@@ -35,6 +36,13 @@ gulp.task('watch', ['watch:daemon', 'watch:test']);
 
 gulp.task('test', ['init'], function(){
   server.kill();
+});
+
+// doesn't call server.kill() but ok for travis!
+gulp.task('travis', ['server:start'], function(){
+  return gulp.src(['test/*.js'], { read: false })
+           .pipe(mocha({ reporter: 'spec' }))
+           .pipe(exit());
 });
 
 gulp.task('default', ['init','watch']);

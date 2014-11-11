@@ -5,7 +5,8 @@
   "main": "daemon.js",
   "scripts": {
     "start": "./node_modules/.bin/gulp",
-    "test": "./node_modules/.bin/gulp test"
+    "test": "./node_modules/.bin/gulp test",
+    "travis": "./node_modules/.bin/gulp travis"
   },
   "repository": {
     "type": "git",
@@ -25,6 +26,7 @@
     "gulp-mocha": "~1.1.1",
     "gulp-util": "~3.0.1",
     "gulp-develop-server": "~0.2.4",
+    "gulp-exit": "0.0.2",
     "mocha": "~2.0.1",
     "chai": "~1.10.0",
     "supertest": "~0.14.0"
