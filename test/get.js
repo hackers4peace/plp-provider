@@ -2,7 +2,9 @@ var mocha = require('mocha');
 var chai = require('chai');
 var supertest = require('supertest');
 
-var request = supertest('http://localhost:5000');
+var config = require('../config');
+
+var request = supertest('http://' + config.domain);
 
 describe('GET', function() {
   it('should respond with existing profile', function(done) {
@@ -25,6 +27,7 @@ describe('GET', function() {
   describe('HTTP status codes', function() {
 
     it("should respond 500 if server errors");
+
     it("should respond 404 if profile doesn't exit", function(done) {
       var path =  '/this-does-not-exist';
       request.get(path)
