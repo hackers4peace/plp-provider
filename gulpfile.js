@@ -32,4 +32,9 @@ gulp.task('watch:test', function() {
 gulp.task('init', ['server:start'], runMocha);
 
 gulp.task('watch', ['watch:daemon', 'watch:test']);
+
+gulp.task('test', ['init'], function(){
+  server.kill();
+});
+
 gulp.task('default', ['init','watch']);
