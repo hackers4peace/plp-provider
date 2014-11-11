@@ -2,6 +2,16 @@
 
 Portable Linked Profile Provider. This repo will host definitions and implementations for Providers working with PLP
 
+[![travis-ci](http://img.shields.io/travis/hackers4peace/plp-provider.svg?style=flat)](https://travis-ci.org/hackers4peace/plp-provider)
+[![David](http://img.shields.io/david/hackers4peace/plp-provider.svg?style=flat)](https://david-dm.org/hackers4peace/plp-provider)
+[![David](http://img.shields.io/david/dev/hackers4peace/plp-provider.svg?style=flat)](https://david-dm.org/hackers4peace/plp-provider#info=devDependencies)
+
+[![issues](http://img.shields.io/github/issues/hackers4peace/plp-provider.svg?style=flat)](https://github.com/hackers4peace/plp-provider/issues)
+[![Gitter](http://img.shields.io/badge/chat-Gitter-blue.svg?style=flat)](https://gitter.im/hackers4peace/plp-docs)
+[![Unlicense](http://img.shields.io/badge/license-Unlicense-blue.svg?style=flat)](http://unlicense.org)
+
+
+
 ## About
 
 PLP Providers store profiles. They interact with PLP-Directories, serving them profiles, and with PLP-Editors, which create/update/delete the profiles stored on them
