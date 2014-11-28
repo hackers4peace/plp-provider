@@ -12,6 +12,7 @@ var levelgraph = require('levelgraph');
 var config = require('./config');
 
 var Persona = require('./lib/persona');
+var Authorization = require('./lib/authorization');
 
 var daemon = express();
 
@@ -24,8 +25,7 @@ daemon.use(cookieParser(config.secrets.cookie));
 daemon.use(cookieSession({ secret: config.secrets.session })); //FIXME CSRF
 
 
-// Private
-authorizations = levelgraph('authorizations');
+var authorization = new Authorization(levelgraph('authorizations'));
 
 // TODO refactor storage to dataset.profiles and use LevelGraph
 
@@ -106,61 +106,12 @@ function authenticated(req) {
   }
 }
 
-/**
- * saves email authorized to modify given profile
- */
-function createAuthorization(email, profile) {
-  return new Promise(function(resolve, reject){
-    var triple = {
-      subject: profile['@id'],
-      predicate: 'http://schema.org/email',
-      object: email
-    };
-    authorizations.put(triple, function(err){
-      if(err) reject(err);
-      resolve(profile);
-    });
-  });
-}
-
-/**
- * returns authorization triple containing email authorized to modify given profile
- */
-function getAuthorization(uri) {
-  return new Promise(function(resolve, reject) {
-    var pattern = {
-      subject: uri,
-      predicate: 'http://schema.org/email'
-    };
-    authorizations.get(pattern, function(err, result) {
-      if(err) reject(err);
-      resolve(result[0]);
-    });
-  });
-}
-
-function deleteAuthorization(uri){
-  return new Promise(function(resolve, reject) {
-    getAuthorization(uri)
-    .then(function(authorization){
-      authorizations.del(authorization, function(err) {
-        if(err) reject(err);
-        resolve();
-      });
-    });
-  });
-}
-
 daemon.post('/', function(req, res){
-  // TODO add authentication
-  console.log('agent', req.session.agent);
-
   var profile = req.body;
 
   if(!authenticated(req)) {
     res.send(401);
   } else if(profile["@id"]) {
-    // return 409 Conflict if profile includes @id
     res.send(409);
   } else {
     // create profile
@@ -168,7 +119,7 @@ daemon.post('/', function(req, res){
     profile["@id"] = 'http://' + config.domain + '/' + uuid;
 
     // FIXME rething profile data var names
-    createAuthorization(req.session.agent.email, profile)
+    authorization.create(req.session.agent.email, profile)
     .then(storage.save)
     .then(function(data){
       var min = {
@@ -210,9 +161,9 @@ daemon.put('/:uuid', function(req, res){
     storage.get(uri)
     .then(function(profile){
       return new Promise(function(resolve, reject){
-        getAuthorization(profile['@id'])
-        .then(function(authorization) {
-          if(req.session.agent.email === authorization.object) {
+        authorization.get(profile['@id'])
+        .then(function(auth) {
+          if(req.session.agent.email === auth.object) {
             resolve(profile);
           } else {
             reject('authorization failed');
@@ -246,9 +197,9 @@ daemon.delete('/:uuid', function(req, res){
     storage.get(uri)
     .then(function(profile){
       return new Promise(function(resolve, reject){
-        getAuthorization(profile['@id'])
-        .then(function(authorization) {
-          if(req.session.agent.email === authorization.object) {
+        authorization.get(profile['@id'])
+        .then(function(auth) {
+          if(req.session.agent.email === auth.object) {
             resolve(profile['@id']);
           } else {
             reject('authorization failed');
@@ -257,7 +208,7 @@ daemon.delete('/:uuid', function(req, res){
       });
     })
     .then(storage.delete)
-    .then(deleteAuthorization)
+    .then(authorization.delete)
     .then(function(){
       res.send(204);
     })
