@@ -3,16 +3,19 @@ var cors = require('cors');
 var bodyParser = require('body-parser');
 var cookieParser = require('cookie-parser');
 var cookieSession = require('cookie-session');
-var UUID = require('uuid');
+
 var Promise = require('es6-promise').Promise;
 var _ = require('lodash');
+var UUID = require('uuid');
 var request = require('superagent');
 var levelgraph = require('levelgraph');
-var config = require('./config');
 
 var Persona = require('./lib/persona');
 var Authorization = require('./lib/authorization');
 var FileStore = require('./lib/fileStore');
+
+var config = require('./config');
+
 
 var daemon = express();
 
@@ -29,6 +32,7 @@ var authorization = new Authorization(levelgraph('authorizations'));
 
 // TODO refactor storage to dataset.profiles and use LevelGraph
 var storage = new FileStore(config.dataDir);
+
 
 daemon.post('/auth/login', function(req, res){
 
@@ -63,6 +67,7 @@ daemon.post('/auth/logout', function(req, res){
   res.send(200);
 });
 
+
 function authenticated(req) {
   if(req.session) {
     return req.session.agent;
@@ -70,6 +75,24 @@ function authenticated(req) {
     return false;
   }
 }
+
+
+daemon.get('/:uuid', function(req, res){
+  var uri = 'http://' + config.domain + '/' + req.params.uuid;
+  storage.get(uri)
+    .then(function(data){
+      res.type('application/ld+json');
+      res.send(JSON.stringify(data));
+    })
+    .catch(function(err){
+      // TODO add error reporting
+      console.log(err);
+      var code = 500;
+      if(err.code === 'ENOENT') code = 404;
+      // TODO implement HTTP 410 if previously deleted
+      res.send(code);
+    });
+});
 
 daemon.post('/', function(req, res){
   var profile = req.body;
@@ -101,23 +124,6 @@ daemon.post('/', function(req, res){
       res.send(500);
     });
     }
-});
-
-daemon.get('/:uuid', function(req, res){
-  var uri = 'http://' + config.domain + '/' + req.params.uuid;
-  storage.get(uri)
-    .then(function(data){
-      res.type('application/ld+json');
-      res.send(JSON.stringify(data));
-    })
-    .catch(function(err){
-      // TODO add error reporting
-      console.log(err);
-      var code = 500;
-      if(err.code === 'ENOENT') code = 404;
-      // TODO implement HTTP 410 if previously deleted
-      res.send(code);
-    });
 });
 
 daemon.put('/:uuid', function(req, res){
