@@ -1,4 +1,3 @@
-var fs = require('fs');
 var express = require('express');
 var cors = require('cors');
 var bodyParser = require('body-parser');
@@ -13,6 +12,7 @@ var config = require('./config');
 
 var Persona = require('./lib/persona');
 var Authorization = require('./lib/authorization');
+var FileStore = require('./lib/fileStore');
 
 var daemon = express();
 
@@ -28,42 +28,7 @@ daemon.use(cookieSession({ secret: config.secrets.session })); //FIXME CSRF
 var authorization = new Authorization(levelgraph('authorizations'));
 
 // TODO refactor storage to dataset.profiles and use LevelGraph
-
-var storage = {
-  get: function(uri){
-    return new Promise(function(resolve, reject){
-      var uuid = uri.split('/').pop();
-      var path = config.profilesDir + '/' + uuid;
-      fs.readFile(path, 'utf8', function(err, data){
-        if(err) reject(err);
-        if(data) {
-          data = JSON.parse(data);
-        }
-        resolve(data);
-      });
-    });
-  },
-  save: function(profile){
-    return new Promise(function(resolve, reject){
-      var uuid = profile['@id'].split('/').pop();
-      var path = config.profilesDir + '/' + uuid;
-      fs.writeFile(path, JSON.stringify(profile), function(err){
-        if(err) reject(err);
-        resolve(profile);
-      });
-    });
-  },
-  delete: function(uri){
-    return new Promise(function(resolve, reject){
-      var uuid = uri.split('/').pop();
-      var path = config.profilesDir + '/' + uuid;
-      fs.unlink(path, function(err){
-        if(err) reject(err);
-        resolve(uri);
-      });
-    });
-  },
-};
+var storage = new FileStore(config.dataDir);
 
 daemon.post('/auth/login', function(req, res){
 
@@ -83,9 +48,9 @@ daemon.post('/auth/login', function(req, res){
 
       res.json(req.session.agent);
     })
-    .catch(function(error){
+    .catch(function(err){
       // TODO add error reporting
-      console.log(error);
+      console.log(err);
       res.send(500);
     });
   } else {
@@ -132,6 +97,7 @@ daemon.post('/', function(req, res){
     })
     .catch(function(err){
       // TODO add error reporting
+      console.log(err);
       res.send(500);
     });
     }
@@ -146,6 +112,7 @@ daemon.get('/:uuid', function(req, res){
     })
     .catch(function(err){
       // TODO add error reporting
+      console.log(err);
       var code = 500;
       if(err.code === 'ENOENT') code = 404;
       // TODO implement HTTP 410 if previously deleted
