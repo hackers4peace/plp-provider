@@ -76,6 +76,10 @@ function authenticated(req) {
   }
 }
 
+function authorized(req, auth) {
+  return req.session.agent.email === auth.object;
+}
+
 
 daemon.get('/:uuid', function(req, res){
   var uri = 'http://' + config.domain + '/' + req.params.uuid;
@@ -88,8 +92,9 @@ daemon.get('/:uuid', function(req, res){
       // TODO add error reporting
       console.log(err);
       var code = 500;
+      // FIXME abstract error for any storage
       if(err.code === 'ENOENT') code = 404;
-      // TODO implement HTTP 410 if previously deleted
+      // TODO implement HTTP 410 if previously deleted #7
       res.send(code);
     });
 });
@@ -97,23 +102,19 @@ daemon.get('/:uuid', function(req, res){
 daemon.post('/', function(req, res){
   var profile = req.body;
 
-  if(!authenticated(req)) {
+  if(profile["@id"]) {
+    res.send(409, 'new profile shouldn not have an @id');
+  } else if(!authenticated(req)) {
     res.send(401);
-  } else if(profile["@id"]) {
-    res.send(409);
   } else {
-    // create profile
-    var uuid = UUID.v4();
-    profile["@id"] = 'http://' + config.domain + '/' + uuid;
-
-    // FIXME rething profile data var names
+    profile["@id"] = 'http://' + config.domain + '/' + UUID.v4();
     authorization.create(req.session.agent.email, profile)
     .then(storage.save)
-    .then(function(data){
+    .then(function(profile){
       var min = {
-        "@context": data["@context"],
-        "@id": data["@id"],
-        "@type": data["@type"]
+        "@context": profile["@context"],
+        "@id": profile["@id"],
+        "@type": profile["@type"]
       };
       res.type('application/ld+json');
       res.send(min);
@@ -128,19 +129,20 @@ daemon.post('/', function(req, res){
 
 daemon.put('/:uuid', function(req, res){
   var uri = 'http://' + config.domain + '/' + req.params.uuid;
-  if(!authenticated(req)) {
+  var profile = req.body;
+
+  if(profile['@id'] !== uri) {
+    res.send(400, '@id of profile in request does not match requested uri');
+  } else if(!authenticated(req)) {
     res.send(401);
   } else {
-    storage.get(uri)
-    .then(function(profile){
+    storage.get(profile['@id'])
+    .then(function(old){
       return new Promise(function(resolve, reject){
         authorization.get(profile['@id'])
         .then(function(auth) {
-          if(req.session.agent.email === auth.object) {
-            resolve(profile);
-          } else {
-            reject('authorization failed');
-          }
+          if(!authorized(req, auth)) reject('authorization failed');
+          resolve(profile);
         });
       });
     })
@@ -151,6 +153,7 @@ daemon.put('/:uuid', function(req, res){
     .catch(function(err){
       console.log(err);
       var code = 500;
+      // FIXME abstract error for any storage
       if(err.code === 'ENOENT') code = 404;
       if(err === 'authorization failed') code = 403;
       if(code === 500) {
@@ -172,11 +175,8 @@ daemon.delete('/:uuid', function(req, res){
       return new Promise(function(resolve, reject){
         authorization.get(profile['@id'])
         .then(function(auth) {
-          if(req.session.agent.email === auth.object) {
-            resolve(profile['@id']);
-          } else {
-            reject('authorization failed');
-          }
+          if(!authorized(req, auth)) reject('authorization failed');
+          resolve(profile['@id']);
         });
       });
     })
@@ -188,6 +188,7 @@ daemon.delete('/:uuid', function(req, res){
     .catch(function(err){
       console.log(err);
       var code = 500;
+      // FIXME abstract error for any storage
       if(err.code === 'ENOENT') code = 404;
       if(err === 'authorization failed') code = 403;
       if(code === 500) {
