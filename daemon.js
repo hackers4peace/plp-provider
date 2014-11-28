@@ -8,6 +8,7 @@ var UUID = require('uuid');
 var Promise = require('es6-promise').Promise;
 var _ = require('lodash');
 var request = require('superagent');
+var levelgraph = require('levelgraph');
 var config = require('./config');
 
 var daemon = express();
@@ -45,31 +46,42 @@ function verifyPersona(assertion, origin){
   });
 }
 
+// Private
+authorizations = levelgraph('authorizations');
+
+// TODO refactor storage to dataset.profiles and use LevelGraph
+
 var storage = {
-  get: function(uuid){
+  get: function(uri){
     return new Promise(function(resolve, reject){
+      var uuid = uri.split('/').pop();
       var path = config.profilesDir + '/' + uuid;
-      fs.readFile(path, function(err, data){
+      fs.readFile(path, 'utf8', function(err, data){
         if(err) reject(err);
+        if(data) {
+          data = JSON.parse(data);
+        }
         resolve(data);
       });
     });
   },
-  save: function(uuid, content){
+  save: function(profile){
     return new Promise(function(resolve, reject){
+      var uuid = profile['@id'].split('/').pop();
       var path = config.profilesDir + '/' + uuid;
-      fs.writeFile(path, JSON.stringify(content), function(err){
+      fs.writeFile(path, JSON.stringify(profile), function(err){
         if(err) reject(err);
-        resolve(content);
+        resolve(profile);
       });
     });
   },
-  delete: function(uuid){
+  delete: function(uri){
     return new Promise(function(resolve, reject){
+      var uuid = uri.split('/').pop();
       var path = config.profilesDir + '/' + uuid;
       fs.unlink(path, function(err){
         if(err) reject(err);
-        resolve();
+        resolve(uri);
       });
     });
   },
@@ -89,7 +101,7 @@ daemon.post('/auth/login', function(req, res){
 
       // start session
       req.session.agent = {};
-      req.session.agent.persona = verification;
+      req.session.agent.email = verification.email;
 
       res.json(req.session.agent);
     })
@@ -108,6 +120,58 @@ daemon.post('/auth/logout', function(req, res){
   res.send(200);
 });
 
+function authenticated(req) {
+  if(req.session) {
+    return req.session.agent;
+  } else {
+    return false;
+  }
+}
+
+/**
+ * saves email authorized to modify given profile
+ */
+function createAuthorization(email, profile) {
+  return new Promise(function(resolve, reject){
+    var triple = {
+      subject: profile['@id'],
+      predicate: 'http://schema.org/email',
+      object: email
+    };
+    authorizations.put(triple, function(err){
+      if(err) reject(err);
+      resolve(profile);
+    });
+  });
+}
+
+/**
+ * returns authorization triple containing email authorized to modify given profile
+ */
+function getAuthorization(uri) {
+  return new Promise(function(resolve, reject) {
+    var pattern = {
+      subject: uri,
+      predicate: 'http://schema.org/email'
+    };
+    authorizations.get(pattern, function(err, result) {
+      if(err) reject(err);
+      resolve(result[0]);
+    });
+  });
+}
+
+function deleteAuthorization(uri){
+  return new Promise(function(resolve, reject) {
+    getAuthorization(uri)
+    .then(function(authorization){
+      authorizations.del(authorization, function(err) {
+        if(err) reject(err);
+        resolve();
+      });
+    });
+  });
+}
 
 daemon.post('/', function(req, res){
   // TODO add authentication
@@ -115,66 +179,121 @@ daemon.post('/', function(req, res){
 
   var profile = req.body;
 
-  // return 409 Conflict if profile includes @id
-  if(profile["@id"]) {
+  if(!authenticated(req)) {
+    res.send(401);
+  } else if(profile["@id"]) {
+    // return 409 Conflict if profile includes @id
     res.send(409);
   } else {
+    // create profile
     var uuid = UUID.v4();
     profile["@id"] = 'http://' + config.domain + '/' + uuid;
 
-    storage.save(uuid, profile)
-      .then(function(data){
-        var min = {
-          "@context": data["@context"],
-          "@id": data["@id"],
-          "@type": data["@type"]
-        };
-        res.type('application/ld+json');
-        res.send(min);
-      })
-      .catch(function(err){
-        // TODO add error reporting
-        res.send(500);
-      });
+    // FIXME rething profile data var names
+    createAuthorization(req.session.agent.email, profile)
+    .then(storage.save)
+    .then(function(data){
+      var min = {
+        "@context": data["@context"],
+        "@id": data["@id"],
+        "@type": data["@type"]
+      };
+      res.type('application/ld+json');
+      res.send(min);
+    })
+    .catch(function(err){
+      // TODO add error reporting
+      res.send(500);
+    });
     }
 });
 
 daemon.get('/:uuid', function(req, res){
-  storage.get(req.params.uuid)
+  var uri = 'http://' + config.domain + '/' + req.params.uuid;
+  storage.get(uri)
     .then(function(data){
       res.type('application/ld+json');
-      res.send(data.toString());
+      res.send(JSON.stringify(data));
     })
     .catch(function(err){
       // TODO add error reporting
       var code = 500;
       if(err.code === 'ENOENT') code = 404;
+      // TODO implement HTTP 410 if previously deleted
       res.send(code);
     });
 });
 
 daemon.put('/:uuid', function(req, res){
-  // TODO add authentication
-  storage.save(req.params.uuid, req.body)
+  var uri = 'http://' + config.domain + '/' + req.params.uuid;
+  if(!authenticated(req)) {
+    res.send(401);
+  } else {
+    storage.get(uri)
+    .then(function(profile){
+      return new Promise(function(resolve, reject){
+        getAuthorization(profile['@id'])
+        .then(function(authorization) {
+          if(req.session.agent.email === authorization.object) {
+            resolve(profile);
+          } else {
+            reject('authorization failed');
+          }
+        });
+      });
+    })
+    .then(storage.save)
     .then(function(){
       res.send(200);
     })
     .catch(function(err){
-      // TODO add error reporting
-      res.send(500);
+      console.log(err);
+      var code = 500;
+      if(err.code === 'ENOENT') code = 404;
+      if(err === 'authorization failed') code = 403;
+      if(code === 500) {
+        // TODO add error reporting
+      }
+      res.send(code);
     });
+  }
 });
 
 daemon.delete('/:uuid', function(req, res){
-  // TODO add authentication
-  storage.delete(req.params.uuid)
+
+  var uri = 'http://' + config.domain + '/' + req.params.uuid;
+  if(!authenticated(req)) {
+    res.send(401);
+  } else {
+    storage.get(uri)
+    .then(function(profile){
+      return new Promise(function(resolve, reject){
+        getAuthorization(profile['@id'])
+        .then(function(authorization) {
+          if(req.session.agent.email === authorization.object) {
+            resolve(profile['@id']);
+          } else {
+            reject('authorization failed');
+          }
+        });
+      });
+    })
+    .then(storage.delete)
+    .then(deleteAuthorization)
     .then(function(){
-      res.send(200);
+      res.send(204);
     })
     .catch(function(err){
-      // TODO add error reporting
-      res.send(500);
+      console.log(err);
+      var code = 500;
+      if(err.code === 'ENOENT') code = 404;
+      if(err === 'authorization failed') code = 403;
+      if(code === 500) {
+        // TODO add error reporting
+      }
+      res.send(code);
     });
+  }
 });
 
 daemon.listen(config.listenOn, function(){
