@@ -11,6 +11,8 @@ var request = require('superagent');
 var levelgraph = require('levelgraph');
 var config = require('./config');
 
+var Persona = require('./lib/persona');
+
 var daemon = express();
 
 daemon.use(cors({ origin: true, credentials: true }));
@@ -21,30 +23,6 @@ daemon.use(bodyParser.json({ type: 'application/ld+json' }));
 daemon.use(cookieParser(config.secrets.cookie));
 daemon.use(cookieSession({ secret: config.secrets.session })); //FIXME CSRF
 
-
-/*
- * Mozilla Persona
- */
-function verifyPersona(assertion, origin){
-  return new Promise(function(resolve, reject) {
-    request.post('https://verifier.login.persona.org/verify')
-      .send({
-        assertion: assertion,
-        audience: origin
-      })
-      .end(function(err, res){
-        if(err) reject(err);
-        if(res.ok){
-          // debug
-          console.log('persona verification', res.body);
-
-          resolve(res.body);
-        } else {
-          reject(res.error);
-        }
-      });
-  });
-}
 
 // Private
 authorizations = levelgraph('authorizations');
@@ -96,7 +74,7 @@ daemon.post('/auth/login', function(req, res){
   if(_.contains(config.audiences, req.headers.origin)){
 
     // persona verify
-    verifyPersona(req.body.assertion, req.headers.origin)
+    Persona.verify(req.body.assertion, req.headers.origin)
     .then(function(verification){
 
       // start session
