@@ -4,7 +4,6 @@ module.exports = {
   dataDir: 'data',
   audiences: ['http://localhost:3000'],
   secrets: {
-    cookie: "BikOcikteuvMyecCergEsyidTydwapal",
-    session: "twadCytwuddindIdHikWigipdunumLim"
+    jwt: "BikOcikteuvMyecCergEsyidTydwapal"
   }
 };

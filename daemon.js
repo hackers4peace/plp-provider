@@ -1,8 +1,8 @@
 var express = require('express');
 var cors = require('cors');
 var bodyParser = require('body-parser');
-var cookieParser = require('cookie-parser');
-var cookieSession = require('cookie-session');
+var expressJwt = require('express-jwt');
+var jwt = require('jsonwebtoken');
 
 var Promise = require('es6-promise').Promise;
 var _ = require('lodash');
@@ -16,7 +16,6 @@ var FileStore = require('./lib/fileStore');
 
 var config = require('./config');
 
-
 var daemon = express();
 
 daemon.use(cors({ origin: true, credentials: true }));
@@ -24,9 +23,22 @@ daemon.options('*', cors());
 
 daemon.use(bodyParser.json({ type: 'application/json' }));
 daemon.use(bodyParser.json({ type: 'application/ld+json' }));
-daemon.use(cookieParser(config.secrets.cookie));
-daemon.use(cookieSession({ secret: config.secrets.session })); //FIXME CSRF
 
+/**
+ * GET requests don't require authentication
+ * attribution: http://stackoverflow.com/a/19337607/2968245
+ */
+function restricted(fn) {
+  return function(req, res, next) {
+    if (req.method === 'GET' || req.path.match(/\/auth/)) {
+      next();
+    } else {
+      fn(req, res, next);
+    }
+  };
+}
+
+daemon.use(restricted(expressJwt({ secret: config.secrets.jwt, userProperty: 'agent'})));
 
 var authorization = new Authorization(levelgraph('authorizations'));
 
@@ -46,11 +58,11 @@ daemon.post('/auth/login', function(req, res){
     Persona.verify(req.body.assertion, req.headers.origin)
     .then(function(verification){
 
-      // start session
-      req.session.agent = {};
-      req.session.agent.email = verification.email;
+      // TODO generate UUID for logout
+      var agent = { email: verification.email };
+      var token = jwt.sign(agent, config.secrets.jwt, { expiresInMinutes: 60*5 });
 
-      res.json(req.session.agent);
+      res.json({ token: token });
     })
     .catch(function(err){
       // TODO add error reporting
@@ -63,21 +75,21 @@ daemon.post('/auth/login', function(req, res){
 });
 
 daemon.post('/auth/logout', function(req, res){
-  req.session = null;
+  // TODO
   res.send(200);
 });
 
 
 function authenticated(req) {
-  if(req.session) {
-    return req.session.agent;
+  if(req.agent) {
+    return req.agent.email;
   } else {
     return false;
   }
 }
 
 function authorized(req, auth) {
-  return req.session.agent.email === auth.object;
+  return req.agent.email === auth.object;
 }
 
 
@@ -108,7 +120,7 @@ daemon.post('/', function(req, res){
     res.send(401);
   } else {
     profile["@id"] = 'http://' + config.domain + '/' + UUID.v4();
-    authorization.create(req.session.agent.email, profile)
+    authorization.create(req.agent.email, profile)
     .then(storage.save)
     .then(function(profile){
       var min = {
