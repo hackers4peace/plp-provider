@@ -10,7 +10,7 @@ var fixture = {
   content: {"name":"elf","additionalname":"","description":"LOL","birthDate":"","nationality":"","website":"","image":"","address":[],"memberOf":[],"contactPoint":[],"interest":[],"@type":"Person","@id":"http://localhost:5000/739bd864-d6d3-48a2-af3a-1a81d65d5604"}
 };
 
-fs.writeFileSync(config.profilesDir + '/' + fixture.uuid, JSON.stringify(fixture.content));
+fs.writeFileSync(config.dataDir + '/' + fixture.uuid, JSON.stringify(fixture.content));
 
 var request = supertest('http://' + config.domain);
 

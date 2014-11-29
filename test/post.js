@@ -11,7 +11,7 @@ var fixture = {"name":"","additionalname":"dfafda","description":"","birthDate":
 
 describe('POST', function() {
 
-  it('should respond with short profile with @id') /*, function(done) {
+  it('should respond with short data with @id') /*, function(done) {
     var path =  '/';
     request.post(path)
       .set('Content-Type', 'application/ld+json')
