@@ -45,10 +45,11 @@ describe('POST', function() {
 
   });
 
-  describe('HTTP status codes', function(done) {
+  describe('HTTP status codes', function() {
 
     it("should respond 500 if server errors");
-    it("should respond 401 if not authenticated", function(){
+
+    it("should respond 401 if not authenticated", function(done){
       var path =  '/';
       request.post(path)
         .set('Content-Type', 'application/ld+json')

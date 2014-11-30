@@ -181,6 +181,9 @@ function authorize(req) {
   });
 }
 
+/**
+ * 401 Unauthorized handled by express-jwt
+ */
 function statusCode(error) {
   // debug
   console.log('statusCode', error);
