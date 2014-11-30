@@ -3,6 +3,7 @@ var chai = require('chai');
 var supertest = require('supertest');
 var fs = require('fs');
 
+var daemon = require('../daemon');
 var config = require('../config');
 
 var fixture = {
@@ -12,7 +13,7 @@ var fixture = {
 
 fs.writeFileSync(config.dataDir + '/' + fixture.uuid, JSON.stringify(fixture.content));
 
-var request = supertest('http://' + config.domain);
+var request = supertest(daemon);
 
 describe('GET', function() {
   it('should respond with existing profile', function(done) {

@@ -31,7 +31,7 @@ daemon.use(addUri());
 // TODO refactor storage to dataset.profiles and use LevelGraph
 var storage = new FileStore(config.dataDir);
 
-var authorization = new Authorization(levelgraph('authorizations'));
+var authorization = new Authorization(levelgraph(process.env.NODE_ENV || 'tmp/' + UUID.v4()));
 var verification = new Verification(storage);
 
 
@@ -134,9 +134,7 @@ daemon.delete('/:uuid', function(req, res){
   });
 });
 
-daemon.listen(config.listenOn, function(){
-  console.log('listening on: ', config.listenOn);
-});
+module.exports = daemon;
 
 
 /**

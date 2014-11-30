@@ -3,9 +3,10 @@ var expect = require('chai').expect;
 var supertest = require('supertest');
 var jwt = require('jsonwebtoken');
 
+var daemon = require('../daemon');
 var config = require('../config');
 
-var request = supertest('http://' + config.domain);
+var request = supertest(daemon);
 
 var fixture = {"name":"","additionalname":"dfafda","description":"","birthDate":"","nationality":"","website":"","image":"","address":[],"memberOf":[],"contactPoint":[],"interest":[],"@type":"Person"};
 var agent = { email: 'test@example.org' };
