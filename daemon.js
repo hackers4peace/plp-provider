@@ -10,6 +10,7 @@ var UUID = require('uuid');
 var request = require('superagent');
 var levelgraph = require('levelgraph');
 
+var Errors = require('./lib/errors');
 var Persona = require('./lib/persona');
 var Authorization = require('./lib/authorization');
 var Verification = require('./lib/verification');
@@ -174,7 +175,7 @@ function authorize(req) {
   return new Promise(function(resolve, reject){
     authorization.get(req.uri)
     .then(function(auth) {
-      if(!auth || req.agent.email !== auth.object) reject('authorization failed');
+      if(!auth || req.agent.email !== auth.object) reject(new Errors.Authorization());
       resolve(req);
     })
     .catch(reject);
@@ -189,11 +190,10 @@ function statusCode(error) {
   console.log('statusCode', error);
 
   var code = 500;
-  if(error === 'authorization failed') code = 403;
-  // FIXME abstract error for any storage
-  if(error.code === 'ENOENT') code = 404;
-  if(error.message === '@id of profile in request does not match requested uri') code = 400;
-  if(error.message === 'new profile shouldn not have an @id') code = 409;
+  if(error instanceof Errors.Authorization) code = 403;
+  if(error instanceof Errors.Existance) code = 404;
+  if(error instanceof Errors.Mismatch) code = 400;
+  if(error instanceof Errors.Novelity) code = 409;
   if(code === 500) {
     // TODO add error reporting
   }
