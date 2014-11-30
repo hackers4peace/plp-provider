@@ -27,6 +27,12 @@ daemon.use(bodyParser.json({ type: 'application/json' }));
 daemon.use(bodyParser.json({ type: 'application/ld+json' }));
 
 daemon.use(restricted(expressJwt({ secret: config.secrets.jwt, userProperty: 'agent'})));
+daemon.use(function (err, req, res, next) {
+  if (err.name === 'UnauthorizedError') {
+    res.send(401, 'authentication required');
+  }
+});
+
 daemon.use(addUri());
 
 // TODO refactor storage to dataset.profiles and use LevelGraph
@@ -187,7 +193,7 @@ function authorize(req) {
  */
 function statusCode(error) {
   // debug
-  console.log('statusCode', error);
+  //console.log('statusCode', error);
 
   var code = 500;
   if(error instanceof Errors.Authorization) code = 403;
