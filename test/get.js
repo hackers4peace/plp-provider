@@ -35,8 +35,9 @@ describe('GET', function() {
   describe('HTTP status codes', function() {
 
     it("should respond 500 if server errors");
+    it("should respond 410 Gone if previously deleted");
 
-    it("should respond 404 if profile doesn't exit", function(done) {
+    it("should respond 404 Not Found if profile never exsted", function(done) {
       var path =  '/this-does-not-exist';
       request.get(path)
         .expect(404, done);
