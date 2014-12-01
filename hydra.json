@@ -1,0 +1,173 @@
+{
+    "@context": {
+        "vocab": "http://hackers4peace.net/plp/api#",
+        "hydra": "http://www.w3.org/ns/hydra/core#",
+        "ApiDocumentation": "hydra:ApiDocumentation",
+        "property": {
+            "@id": "hydra:property",
+            "@type": "@id"
+        },
+        "readonly": "hydra:readonly",
+        "writeonly": "hydra:writeonly",
+        "supportedClass": "hydra:supportedClass",
+        "supportedProperty": "hydra:supportedProperty",
+        "supportedOperation": "hydra:supportedOperation",
+        "method": "hydra:method",
+        "expects": {
+            "@id": "hydra:expects",
+            "@type": "@id"
+        },
+        "returns": {
+            "@id": "hydra:returns",
+            "@type": "@id"
+        },
+        "statusCodes": "hydra:statusCodes",
+        "code": "hydra:statusCode",
+        "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+        "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+        "label": "rdfs:label",
+        "description": "rdfs:comment",
+        "domain": {
+            "@id": "rdfs:domain",
+            "@type": "@id"
+        },
+        "range": {
+            "@id": "rdfs:range",
+            "@type": "@id"
+        },
+        "subClassOf": {
+            "@id": "rdfs:subClassOf",
+            "@type": "@id"
+        }
+    },
+    "@id": "http://provider.plp.hackers4peace.net/doc",
+    "@type": "ApiDocumentation",
+    "entrypoint": {
+      "@id": "http://provider.plp.hackers4peace.net/",
+      "@type": "vocab:EntryPoint"
+    },
+    "supportedClass": [
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "hydra:title": "Resource",
+            "hydra:description": null,
+            "supportedOperation": [],
+            "supportedProperty": []
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "hydra:title": "Collection",
+            "hydra:description": null,
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "hydra:title": "members",
+                    "hydra:description": "The members of this collection.",
+                    "required": null,
+                    "readonly": false,
+                    "writeonly": false
+                }
+            ]
+        },
+        {
+            "@id": "vocab:EntryPoint",
+            "@type": "hydra:Class",
+            "subClassOf": null,
+            "label": "EntryPoint",
+            "description": "The main entry point or homepage of the API.",
+            "supportedOperation": [
+                {
+                    "@id": "_:profile_create",
+                    "@type": "hydra:CreateResourceOperation",
+                    "method": "POST",
+                    "label": "Create new profile",
+                    "description": null,
+                    "expects": "vocab:Profile",
+                    "returns": "vocab:Profile",
+                    "statusCodes": []
+                }
+            ]
+        },
+        {
+            "@id": "vocab:Profile",
+            "@type": "hydra:Class",
+            "subClassOf": null,
+            "label": "Profile",
+            "description": "A generic Profile represents a profile registered in the system.",
+            "supportedOperation": [
+                {
+                    "@id": "_:profile_replace",
+                    "@type": "hydra:ReplaceResourceOperation",
+                    "method": "PUT",
+                    "label": "Replaces an existing Profile entity",
+                    "description": null,
+                    "expects": "vocab:Profile",
+                    "returns": "vocab:Profile",
+                    "statusCodes": [
+                        {
+                            "code": 404,
+                            "description": "If the Profile entity wasn't found."
+                        }
+                    ]
+                },
+                {
+                    "@id": "_:profile_delete",
+                    "@type": "hydra:DeleteResourceOperation",
+                    "method": "DELETE",
+                    "label": "Deletes a Profile entity",
+                    "description": null,
+                    "expects": null,
+                    "returns": "http://www.w3.org/2002/07/owl#Nothing",
+                    "statusCodes": []
+                },
+                {
+                    "@id": "_:profile_retrieve",
+                    "@type": "hydra:Operation",
+                    "method": "GET",
+                    "label": "Retrieves a Profile entity",
+                    "description": null,
+                    "expects": null,
+                    "returns": "vocab:Profile",
+                    "statusCodes": []
+                }
+            ],
+            "supportedProperty": [
+                {
+                    "property": {
+                        "@id": "vocab:name",
+                        "@type": "rdf:Property",
+                        "label": "name",
+                        "description": "The profile's full name",
+                        "domain": "vocab:Profile",
+                        "range": "http://www.w3.org/2001/XMLSchema#string",
+                        "supportedOperation": []
+                    },
+                    "hydra:title": "name",
+                    "hydra:description": "The profile's full name",
+                    "required": null,
+                    "readonly": false,
+                    "writeonly": false
+                },
+                {
+                    "property": {
+                        "@id": "vocab:contactPoint",
+                        "@type": "rdf:Property",
+                        "label": "email",
+                        "description": "The profile's contact points",
+                        "domain": "vocab:Profile",
+                        "range": "schema:ContactPoint",
+                        "supportedOperation": []
+                    },
+                    "hydra:title": "contactPoint",
+                    "hydra:description": "The profile's contact points",
+                    "required": null,
+                    "readonly": false,
+                    "writeonly": false
+                }
+            ]
+        }
+    ]
+}
