@@ -12,7 +12,7 @@
 
 ## About
 
-Portable Link Profiles - Provider Services store profiles. They interact with PLP-Directories, serving them profiles, and with PLP-Editors, which create/update/delete the profiles stored on Providers.
+[Portable Link Profiles](https://github.com/hackers4peace/plp-docs) - Provider Services store profiles. They interact with [PLP Directories](https://github.com/hackers4peace/plp-directory), serving them profiles, and with [PLP Editors](https://github.com/hackers4peace/plp-editor), which can create/update/delete profiles stored on Providers.
 
 ## API
 
