@@ -1,7 +1,7 @@
 {
     "@context": {
-        "vocab": "http://hackers4peace.net/plp/api#",
         "hydra": "http://www.w3.org/ns/hydra/core#",
+        "schema": "http://schema.org/",
         "ApiDocumentation": "hydra:ApiDocumentation",
         "property": {
             "@id": "hydra:property",
@@ -44,7 +44,7 @@
     "@type": "ApiDocumentation",
     "entrypoint": {
       "@id": "http://provider.plp.hackers4peace.net/",
-      "@type": "vocab:EntryPoint"
+      "@type": "schema:EntryPoint"
     },
     "supportedClass": [
         {
@@ -73,96 +73,96 @@
             ]
         },
         {
-            "@id": "vocab:EntryPoint",
+            "@id": "schema:EntryPoint",
             "@type": "hydra:Class",
             "subClassOf": null,
             "label": "EntryPoint",
             "description": "The main entry point or homepage of the API.",
             "supportedOperation": [
                 {
-                    "@id": "_:profile_create",
-                    "@type": "hydra:CreateResourceOperation",
+                    "@id": "_:person_create",
+                    "@type": "schema:AddAction",
                     "method": "POST",
-                    "label": "Create new profile",
+                    "label": "Create new person",
                     "description": null,
-                    "expects": "vocab:Profile",
-                    "returns": "vocab:Profile",
+                    "expects": "schema:Person",
+                    "returns": "schema:Person",
                     "statusCodes": []
                 }
             ]
         },
         {
-            "@id": "vocab:Profile",
+            "@id": "schema:Person",
             "@type": "hydra:Class",
             "subClassOf": null,
-            "label": "Profile",
-            "description": "A generic Profile represents a profile registered in the system.",
+            "label": "Person",
+            "description": "A generic Person represents a person registered in the system.",
             "supportedOperation": [
                 {
-                    "@id": "_:profile_replace",
-                    "@type": "hydra:ReplaceResourceOperation",
+                    "@id": "_:person_replace",
+                    "@type": "schema:UpdateAction",
                     "method": "PUT",
-                    "label": "Replaces an existing Profile entity",
+                    "label": "Replaces an existing Person entity",
                     "description": null,
-                    "expects": "vocab:Profile",
-                    "returns": "vocab:Profile",
+                    "expects": "schema:Person",
+                    "returns": "schema:Person",
                     "statusCodes": [
                         {
                             "code": 404,
-                            "description": "If the Profile entity wasn't found."
+                            "description": "If the Person entity wasn't found."
                         }
                     ]
                 },
                 {
-                    "@id": "_:profile_delete",
-                    "@type": "hydra:DeleteResourceOperation",
+                    "@id": "_:person_delete",
+                    "@type": "schema:DeleteAction",
                     "method": "DELETE",
-                    "label": "Deletes a Profile entity",
+                    "label": "Deletes a Person entity",
                     "description": null,
                     "expects": null,
                     "returns": "http://www.w3.org/2002/07/owl#Nothing",
                     "statusCodes": []
                 },
                 {
-                    "@id": "_:profile_retrieve",
-                    "@type": "hydra:Operation",
+                    "@id": "_:person_retrieve",
+                    "@type": "schema:ViewAction",
                     "method": "GET",
-                    "label": "Retrieves a Profile entity",
+                    "label": "Retrieves a Person entity",
                     "description": null,
                     "expects": null,
-                    "returns": "vocab:Profile",
+                    "returns": "schema:Person",
                     "statusCodes": []
                 }
             ],
             "supportedProperty": [
                 {
                     "property": {
-                        "@id": "vocab:name",
+                        "@id": "schema:name",
                         "@type": "rdf:Property",
                         "label": "name",
-                        "description": "The profile's full name",
-                        "domain": "vocab:Profile",
+                        "description": "The person's full name",
+                        "domain": "schema:Thing",
                         "range": "http://www.w3.org/2001/XMLSchema#string",
                         "supportedOperation": []
                     },
                     "hydra:title": "name",
-                    "hydra:description": "The profile's full name",
+                    "hydra:description": "The person's full name",
                     "required": null,
                     "readonly": false,
                     "writeonly": false
                 },
                 {
                     "property": {
-                        "@id": "vocab:contactPoint",
+                        "@id": "schema:contactPoint",
                         "@type": "rdf:Property",
                         "label": "email",
-                        "description": "The profile's contact points",
-                        "domain": "vocab:Profile",
+                        "description": "The person's contact points",
+                        "domain": ["schema:Person", "schema:Organization"],
                         "range": "schema:ContactPoint",
                         "supportedOperation": []
                     },
                     "hydra:title": "contactPoint",
-                    "hydra:description": "The profile's contact points",
+                    "hydra:description": "The person's contact point",
                     "required": null,
                     "readonly": false,
                     "writeonly": false
