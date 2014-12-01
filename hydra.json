@@ -23,6 +23,7 @@
         },
         "statusCodes": "hydra:statusCodes",
         "code": "hydra:statusCode",
+        "name": "schema:name",
         "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
         "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
         "label": "rdfs:label",
@@ -87,7 +88,28 @@
                     "description": null,
                     "expects": "schema:Person",
                     "returns": "schema:Person",
-                    "statusCodes": []
+                    "statusCodes": [
+                        {
+                            "code": 201,
+                            "name": "Created",
+                            "description": "Profile successfully created"
+                        },
+                        {
+                            "code": 401,
+                            "name": "Unauthorized",
+                            "description": "Authentication failed (requires JWT token)"
+                        },
+                        {
+                            "code": 409,
+                            "name": "Conflict",
+                            "description": "Profile can not include @id"
+                        },
+                        {
+                            "code": 500,
+                            "name": "Internal Server Error",
+                            "description": "Unknown server error"
+                        }
+                    ]
                 }
             ]
         },
@@ -99,6 +121,37 @@
             "description": "A generic Person represents a person registered in the system.",
             "supportedOperation": [
                 {
+                    "@id": "_:person_retrieve",
+                    "@type": "schema:ViewAction",
+                    "method": "GET",
+                    "label": "Retrieves a Person entity",
+                    "description": null,
+                    "expects": null,
+                    "returns": "schema:Person",
+                    "statusCodes": [
+                        {
+                            "code": 301,
+                            "name": "Moved Permanently",
+                            "description": "Profile moved to different location"
+                        },
+                        {
+                            "code": 404,
+                            "name": "Not Found",
+                            "description": "Profile never existed in this system"
+                        },
+                        {
+                            "code": 410,
+                            "name": "Gone",
+                            "description": "Profile permanently deleted"
+                        },
+                        {
+                            "code": 500,
+                            "name": "Internal Server Error",
+                            "description": "Unknown server error"
+                        }
+                    ]
+                },
+                {
                     "@id": "_:person_replace",
                     "@type": "schema:UpdateAction",
                     "method": "PUT",
@@ -108,8 +161,29 @@
                     "returns": "schema:Person",
                     "statusCodes": [
                         {
-                            "code": 404,
-                            "description": "If the Person entity wasn't found."
+                            "code": 200,
+                            "name": "OK",
+                            "description": "Profile successfully updated"
+                        },
+                        {
+                            "code": 401,
+                            "name": "Unauthorized",
+                            "description": "Authentication failed (requires JWT token)"
+                        },
+                        {
+                            "code": 403,
+                            "name": "Forbidden",
+                            "description": "You don't have authorization for this resource"
+                        },
+                        {
+                            "code": 400,
+                            "name": "Bad Request",
+                            "description": "Profile @id different then requirested URI"
+                        },
+                        {
+                            "code": 500,
+                            "name": "Internal Server Error",
+                            "description": "Unknown server error"
                         }
                     ]
                 },
@@ -121,17 +195,28 @@
                     "description": null,
                     "expects": null,
                     "returns": "http://www.w3.org/2002/07/owl#Nothing",
-                    "statusCodes": []
-                },
-                {
-                    "@id": "_:person_retrieve",
-                    "@type": "schema:ViewAction",
-                    "method": "GET",
-                    "label": "Retrieves a Person entity",
-                    "description": null,
-                    "expects": null,
-                    "returns": "schema:Person",
-                    "statusCodes": []
+                    "statusCodes": [
+                        {
+                            "code": 204,
+                            "name": "No Content",
+                            "description": "Profile successfully deleted"
+                        },
+                        {
+                            "code": 401,
+                            "name": "Unauthorized",
+                            "description": "Authentication failed (requires JWT token)"
+                        },
+                        {
+                            "code": 403,
+                            "name": "Forbidden",
+                            "description": "You don't have authorization for this resource"
+                        },
+                        {
+                            "code": 500,
+                            "name": "Internal Server Error",
+                            "description": "Unknown server error"
+                        }
+                    ]
                 }
             ],
             "supportedProperty": [

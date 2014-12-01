@@ -58,7 +58,6 @@ gets single profile
  * *HTTP 301 Moved Permanently* - if profile moved elsewhere
  * *HTTP 404 Not Found* - if profile never existed
  * *HTTP 410 Gone* - if profile existed but got deleted
- * *HTTP 409 Conflict* - if payload includes ```@id```
  * *HTTP 500 Internal Server Error*
 
 ### POST /
