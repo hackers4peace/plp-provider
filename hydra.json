@@ -111,6 +111,62 @@
                         }
                     ]
                 }
+            ],
+            "supportedProperty": [
+                {
+                    "property": {
+                        "@id": "/auth/login",
+                        "@type": "hydra:Link",
+                        "label": "login",
+                        "description": "Login endpoint",
+                        "domain": null,
+                        "range": null,
+                        "supportedOperation": [
+                            {
+                                "@id": "_:login",
+                                "@type": "hydra:Operation",
+                                "method": "POST",
+                                "label": "Login",
+                                "description": null,
+                                "expects": "persona:Assertion",
+                                "returns": "jwt:Token",
+                                "statusCodes": []
+                            }
+                        ]
+                    },
+                    "hydra:title": "login",
+                    "hydra:description": "Login to the service",
+                    "required": null,
+                    "readonly": false,
+                    "writeonly": true
+                },
+                {
+                    "property": {
+                        "@id": "/auth/logout",
+                        "@type": "hydra:Link",
+                        "label": "logout",
+                        "description": "Logout endpoint",
+                        "domain": null,
+                        "range": null,
+                        "supportedOperation": [
+                            {
+                                "@id": "_:logout",
+                                "@type": "hydra:Operation",
+                                "method": "POST",
+                                "label": "Logout",
+                                "description": null,
+                                "expects": null,
+                                "returns": null,
+                                "statusCodes": []
+                            }
+                        ]
+                    },
+                    "hydra:title": "login",
+                    "hydra:description": "Login to the service",
+                    "required": null,
+                    "readonly": false,
+                    "writeonly": true
+                }
             ]
         },
         {
