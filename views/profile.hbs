@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html
+  vocab="http://schema.org/"
+  prefix="cco: http://purl.org/ontology/cco/core# foaf: http://xmlns.com/foaf/0.1/ og: http://ogp.me/ns# sec: https://w3id.org/security# doap: http://usefulinc.com/ns/doap#"
+  >
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+
+  <title>elf Pavlik | worldwide elves</title>
+
+  <meta property="og:type" content="profile" />
+  <meta property="og:title" content="{{name}}" />
+  <meta property="og:description" content="{{description}}" />
+  <meta property="og:url" content="{{id}}/" />
+  <meta property="og:image" content="{{image}}" />
+
+  <link rel="stylesheet" href="/bower_components/bootstrap/dist/css/bootstrap.css" />
+  <link rel="stylesheet" href="/assets/screen.css" />
+  <script src="/bower_components/jquery/dist/jquery.min.js"></script>
+  <script src="/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+
+</head>
+<body>
+<div about="{{id}}" typeof="{{j type}}" class="container">
+  <div class="row">
+    <div id="main" class="col-md-3">
+      <h1 property="name">{{name}}</h1>
+      <img property="image" src="{{image}}" />
+    </div>
+    <div class="col-md-6">
+      <p property="description">{{description}}</p>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-3">
+      <ul id="b-day">
+        <li>
+          <span class="glyphicon glyphicon-cloud-download"></span>
+          <span property="birthDate">{{birthDate}}</span>
+        </li>
+        <li>
+          <span class="glyphicon glyphicon-forward"></span>
+          <span property="birthDate">{{birthDayParty}}</span>
+          <span class="glyphicon glyphicon-fire"></span>
+        </li>
+      </ul>
+      <ul id="geo">
+        <li rel="homeLocation">
+          <a typeof="{{j homeLocation.type}}" href="{{homeLocation.id}}">
+            <span property="name">{{homeLocation.name}}</span>
+          </a>
+        </li>
+        <li rel="currentLocation">
+          <a typeof="{{j currentLocation.type}}" href="{{currentLocation.id}}">
+            <span property="name">{{currentLocation.name}}</span>
+          </a>
+        </p>
+      </ul>
+      <ul>
+        <li><span class="glyphicon glyphicon-certificate"></span></li>
+        {{#each sec:publicKey}}
+        <li>
+          <a property="sec:publicKey" href="{{id}}"><span property="name">{{name}}</span></a>
+        </li>
+        {{/each}}
+      </ul>
+      <ul>
+        <li><span class="glyphicon glyphicon-comment"></span></li>
+        {{#each contactPoint}}
+        <li>
+          <a rel="me" property="contactPoint" typeof="{{j type}}" href="{{id}}"><span property="name">{{name}}</span></a>
+        </li>
+        {{/each}}
+      </ul>
+      <ul>
+        <li><span class="glyphicon glyphicon-user"></span></li>
+        {{#each sameAs}}
+        <li>
+          <a rel="me" property="contactPoint" href="{{id}}"><span property="name">{{name}}</span></a>
+        </li>
+        {{/each}}
+      </ul>
+      <div class="panel panel-default">
+        <h2 class="panel-heading">
+          <span class="glyphicon glyphicon-repeat"></span>
+          habits
+        </h2>
+        <ul rel="cco:habit" class="panel-body">
+          {{#each cco:habit}}
+          <li typeof="{{j type}}">
+            <a rel="cco:topic" href="{{cco:topic.id}}" target="dbpedia">
+              <span property="name">{{cco:topic.name}}</span>
+            </a>
+          </li>
+          {{/each}}
+        </ul>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="panel panel-default">
+        <h2 class="panel-heading">
+          <span class="glyphicon glyphicon-wrench"></span>
+          projects
+        </h2>
+        <ul rel="foaf:currentProject" class="panel-body">
+          {{#each foaf:currentProject}}
+          <li>
+            <a typeof="{{j type}}" href="{{id}}"><span property="name">{{name}}</span></a>
+          </li>
+          {{/each}}
+        </ul>
+      </div>
+      <div class="panel panel-default">
+        <h2 class="panel-heading">
+          <span class="glyphicon glyphicon-gift"></span>
+          wishlist
+        </h2>
+        <ul rel="seeks" class="panel-body">
+          {{#each seeks}}
+          <li typeof="{{j type}}">
+            <a property="itemOffered" typeof="{{j itemOffered.type}}" href="{{itemOffered.id}}"><span property="name">{{itemOffered.name}}</span></a>
+          </li>
+          {{/each}}
+        </ul>
+      </div>
+      <div class="panel panel-default">
+        <h2 class="panel-heading">
+          <span class="glyphicon glyphicon-briefcase"></span>
+          equipment
+        </h2>
+        <ul rel="owns" class="panel-body">
+          {{#each owns}}
+          <li>
+            <a typeof="{{j type}}" href="{{id}}"><span property="name">{{name}}</span></a>
+          </li>
+          {{/each}}
+        </ul>
+      </div>
+    </div>
+    <div class="col-md-5">
+      <div class="panel panel-default">
+        <h2 class="panel-heading">
+          <span class="glyphicon glyphicon-asterisk"></span>
+          affiliations
+        </h2>
+        <ul rel="member" class="panel-body">
+          {{#each member}}
+          <li>
+            <a typeof="{{j type}}" href="{{id}}"><span property="name">{{name}}</span></a>
+          </li>
+          {{/each}}
+        </ul>
+      </div>
+      <div class="panel panel-default">
+        <h2 class="panel-heading">
+          <span class="glyphicon glyphicon-calendar"></span>
+          events
+        </h2>
+        <ul rev="attendee" class="panel-body">
+          {{#each attendeeIn}}
+          <li>
+            <a typeof="{{j type}}" href="{{id}}"><span property="name">{{name}}</span></a>
+          </li>
+          {{/each}}
+        </ul>
+      </div>
+      <div class="panel panel-default">
+        <h2 class="panel-heading">
+          <span class="glyphicon glyphicon-map-marker"></span>
+          places
+        </h2>
+        <ul rel="visited" class="panel-body">
+          {{#each visited}}
+          <li>
+            <a typeof="{{j type}}" href="{{id}}"><span property="name">{{name}}</span></a>
+          </li>
+          {{/each}}
+        </ul>
+      </div>
+    </div>
+  </div>
+  <footer>
+    powered by open source
+    <a typeof="SoftwareApplication" href="https://github.com/elf-pavlik/webprofiled">
+      <span property="name">webprofiled</span>
+    </a>
+  </footer>
+</div>
+</body>
+</html>

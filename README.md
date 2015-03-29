@@ -21,7 +21,7 @@ For the API documentation, you can also refer to the seperate [hackers4peace/plp
 [Portable Link Profiles](https://github.com/hackers4peace/plp-docs) - Provider Services store profiles. They interact with [PLP Directories](https://github.com/hackers4peace/plp-directory), serving them profiles, and with [PLP Editors](https://github.com/hackers4peace/plp-editor), which can create/update/delete profiles stored on Providers.
 
 
-## Setup
+## Development
 
 ```bash
 $ cp config.example.js config.js
@@ -31,7 +31,21 @@ edit *config.js* to specify your domain and port
 
 ```bash
 $ npm install
+$ bower install
 $ npm start
+```
+## Production
+
+```bash
+$ cp config.example.js config.js
+```
+
+edit *config.js* to specify your domain and port
+
+```bash
+$ npm install
+$ bower install
+$ gulp less
 ```
 
 ## Unlicense

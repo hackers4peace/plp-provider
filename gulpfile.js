@@ -3,6 +3,7 @@ var gutil = require('gulp-util');
 var server = require('gulp-develop-server');
 var mocha = require('gulp-mocha');
 var exit = require('gulp-exit');
+var less = require('gulp-less');
 
 gulp.task('server:start', function(cb) {
   server.listen( {
@@ -21,12 +22,22 @@ gulp.task('test', function() {
            .on('error', gutil.log);
 });
 
+gulp.task('less', function () {
+  return gulp.src('assets/screen.less')
+  .pipe(less())
+  .pipe(gulp.dest('assets'));
+});
+
 gulp.task('watch:daemon', function() {
   gulp.watch(['server.js', 'daemon.js', 'lib/*.js'], ['server:restart', 'test'] );
 });
 
 gulp.task('watch:test', function() {
   gulp.watch(['test/*.js'], ['test']);
+});
+
+gulp.task('watch:less', function() {
+  gulp.watch(['assets/*.less'], ['less']);
 });
 
 gulp.task('watch', ['watch:daemon', 'watch:test']);
@@ -38,4 +49,4 @@ gulp.task('travis', function(){
            .pipe(exit());
 });
 
-gulp.task('default', ['server:start', 'test' ,'watch']);
+gulp.task('default', ['server:start', 'test', 'less', 'watch']);

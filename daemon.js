@@ -4,6 +4,9 @@ var bodyParser = require('body-parser');
 var expressJwt = require('express-jwt');
 var jwt = require('jsonwebtoken');
 
+var serveStatic = require('serve-static');
+var hbs = require('hbs');
+
 var Promise = require('es6-promise').Promise;
 var _ = require('lodash');
 var UUID = require('uuid');
@@ -34,6 +37,28 @@ daemon.use(function (err, req, res, next) {
 });
 
 daemon.use(addUri());
+
+// HTML
+
+// set view engine to handlebars
+daemon.use(serveStatic('.'));
+daemon.set('view engine', 'hbs');
+
+hbs.registerHelper('j', function(val){
+  if(val && val.join){
+    return val.join(" ");
+  } else {
+    return val;
+  }
+});
+
+/*
+ * no favicon for now!
+ */
+daemon.get('/favicon.ico', function(req, res){
+  res.send(404);
+});
+
 
 // TODO refactor storage to dataset.profiles and use LevelGraph
 var storage = new FileStore(config.dataDir);
@@ -78,8 +103,19 @@ daemon.post('/auth/logout', function(req, res){
 daemon.get('/:uuid', function(req, res){
   storage.get(req.uri)          // -> doc
   .then(function(doc){
-    res.type('application/ld+json');
-    res.send(JSON.stringify(doc));
+    res.format({
+      'text/html': function(){
+        res.render('profile', doc);
+      },
+      'application/json': function(){
+        res.type('application/ld+json');
+        res.send(JSON.stringify(doc));
+      },
+      'application/ld+json': function(){
+        res.type('application/ld+json');
+        res.send(JSON.stringify(doc));
+      }
+    });
   })
   .catch(function(err){
     res.send(statusCode(err), err.message);

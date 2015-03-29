@@ -1,6 +1,11 @@
 node_modules
+bower_components
+
 config.js
 data
 
 tmp
 development
+assets/screen.css
+
+
