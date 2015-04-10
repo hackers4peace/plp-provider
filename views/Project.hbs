@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html
+  vocab="http://schema.org/"
+  prefix="cco: http://purl.org/ontology/cco/core# foaf: http://xmlns.com/foaf/0.1/ og: http://ogp.me/ns# sec: https://w3id.org/security# doap: http://usefulinc.com/ns/doap#"
+  >
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+
+  <title>Portable Linked Profiles | hackers4peace</title>
+
+  <meta property="og:type" content="profile" />
+  <meta property="og:title" content="{{name}}" />
+  <meta property="og:description" content="{{description}}" />
+  <meta property="og:url" content="{{id}}/" />
+  <meta property="og:image" content="{{image}}" />
+
+  <link rel="stylesheet" href="/bower_components/bootstrap/dist/css/bootstrap.css" />
+  <link rel="stylesheet" href="/assets/screen.css" />
+  <script src="/bower_components/jquery/dist/jquery.min.js"></script>
+  <script src="/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+
+</head>
+<body>
+<div about="{{id}}" typeof="{{j type}}" class="container">
+  <div class="row">
+    <div id="main" class="col-md-3">
+      <h1 property="name">{{name}}</h1>
+      <img property="image" src="{{image}}" />
+    </div>
+    <div class="col-md-6">
+      <p property="description">{{description}}</p>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-3">
+    </div>
+    <div class="col-md-4">
+      <div class="panel panel-default">
+        <h2 class="panel-heading">
+          <span class="glyphicon glyphicon-repeat"></span>
+          contributors
+        </h2>
+        <ul rel="contributor" class="panel-body">
+          {{#each contributor}}
+          <li>
+          <a typeof="{{j type}}" href="{{id}}"><span property="name">{{name}}</span></a>
+          </li>
+          {{/each}}
+        </ul>
+      </div>
+      <div class="panel panel-default">
+        <h2 class="panel-heading">
+          <span class="glyphicon glyphicon-calendar"></span>
+          events
+        </h2>
+        <ul rel="event" class="panel-body">
+          {{#each event}}
+          <li>
+          <a typeof="{{j type}}" href="{{id}}"><span property="name">{{name}}</span></a>
+          </li>
+          {{/each}}
+        </ul>
+      </div>
+      <div class="panel panel-default">
+        <h2 class="panel-heading">
+          <span class="glyphicon glyphicon-list"></span>
+          listings
+        </h2>
+        <ul rel="listedIn" class="panel-body">
+          {{#each listedIn}}
+          <li>
+          <a typeof="{{j type}}" href="{{id}}"><span property="name">{{name}}</span></a>
+          </li>
+          {{/each}}
+        </ul>
+      </div>
+    </div>
+    <div class="col-md-5">
+    </div>
+  </div>
+  <footer>
+    powered by open source
+    <a typeof="SoftwareApplication" href="https://github.com/elf-pavlik/webprofiled">
+      <span property="name">webprofiled</span>
+    </a>
+  </footer>
+</div>
+</body>
+</html>

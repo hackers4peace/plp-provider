@@ -105,7 +105,10 @@ daemon.get('/:uuid', function(req, res){
   .then(function(doc){
     res.format({
       'text/html': function(){
-        res.render('profile', doc);
+        var type = doc.type;
+        // handle case of array
+        if(typeof type == 'object') type = type[0];
+        res.render(type, doc);
       },
       'application/json': function(){
         res.type('application/ld+json');

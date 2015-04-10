@@ -177,6 +177,22 @@
           {{/each}}
         </ul>
       </div>
+      <div class="panel panel-default">
+        <h2 class="panel-heading">
+          <span class="glyphicon glyphicon-screenshot"></span>
+          press
+        </h2>
+        <ul rev="about" class="panel-body">
+          {{#each subjectOf}}
+          <li>
+            <a typeof="{{j type}}" href="{{id}}">
+              <span property="name">{{name}}</span>
+              (<span property="inLanguage">{{inLanguage}}</span>)
+            </a>
+          </li>
+          {{/each}}
+        </ul>
+      </div>
     </div>
   </div>
   <footer>
