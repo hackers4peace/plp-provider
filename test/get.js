@@ -6,9 +6,9 @@ var fs = require('fs');
 var daemon = require('../daemon');
 var config = require('../config');
 
-var fixture = {"name":"elf","additionalname":"","description":"LOL","birthDate":"","nationality":"","website":"","image":"","address":[],"memberOf":[],"contactPoint":[],"interest":[],"@type":"Person","@id":"http://localhost:5000/739bd864-d6d3-48a2-af3a-1a81d65d5604"};
+var fixture = {"name":"get fixture","additionalname":"","description":"LOL","birthDate":"","nationality":"","website":"","image":"","address":[],"memberOf":[],"contactPoint":[],"interest":[],"type":"Person","id":"http://localhost:5000/739bd864-d6d3-48a2-af3a-1a81d65d5604"};
 
-var uuid = fixture['@id'].split('/').pop();
+var uuid = fixture.id.split('/').pop();
 
 fs.writeFileSync(config.dataDir + '/' + uuid, JSON.stringify(fixture));
 
@@ -22,10 +22,12 @@ describe('GET', function() {
   });
 
   describe('Content Type', function() {
+    it('should set HTML when unspecified');
 
-    it('should set JSON-LD', function(done) {
+    it('should set JSON-LD when requested', function(done) {
       var path =  '/' + uuid;
       request.get(path)
+        .accept('application/ld+json')
         .expect('Content-Type', /application\/ld\+json/)
         .expect(200, done);
     });

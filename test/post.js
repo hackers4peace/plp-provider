@@ -8,14 +8,14 @@ var config = require('../config');
 
 var request = supertest(daemon);
 
-var fixture = {"name":"","additionalname":"dfafda","description":"","birthDate":"","nationality":"","website":"","image":"","address":[],"memberOf":[],"contactPoint":[],"interest":[],"@type":"Person"};
+var fixture = {"name":"post fixture","additionalname":"dfafda","description":"","birthDate":"","nationality":"","website":"","image":"","address":[],"memberOf":[],"contactPoint":[],"interest":[],"type":"Person"};
 var agent = { email: 'test@example.org' };
 var token = jwt.sign(agent, config.secrets.jwt, { expiresInMinutes: 60*5 });
 
 
 describe('POST', function() {
 
-  it('should respond with short data with @id', function(done) {
+  it('should respond with short data with id', function(done) {
     var path =  '/';
     request.post(path)
       .set('Authorization', 'Bearer ' + token)
@@ -24,7 +24,7 @@ describe('POST', function() {
       .end(function(err, res) {
         if(err) throw err;
         var min = JSON.parse(res.text);
-        expect(min['@id']).to.exist;
+        expect(min.id).to.exist;
         done();
       });
   });
@@ -57,8 +57,8 @@ describe('POST', function() {
         .expect(401, done);
     });
 
-    it("should respond 409 if profile includes @id", function(done) {
-      fixture["@id"] = "http://example.net/abc";
+    it("should respond 409 if profile includes id", function(done) {
+      fixture.id = "http://example.net/abc";
       var path =  '/';
       request.post(path)
         .set('Authorization', 'Bearer ' + token)

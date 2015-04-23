@@ -9,9 +9,9 @@ var config = require('../config');
 
 var request = supertest(daemon);
 
-var fixture = {"name":"elf","additionalname":"","description":"LOL","birthDate":"","nationality":"","website":"","image":"","address":[],"memberOf":[],"contactPoint":[],"interest":[],"@type":"Person","@id":"http://localhost:5000/739bd864-d6d3-48a2-af3a-1a81d65d5604"};
+var fixture = {"name":"put fixture","additionalname":"","description":"LOL","birthDate":"","nationality":"","website":"","image":"","address":[],"memberOf":[],"contactPoint":[],"interest":[],"type":"Person","id":"http://localhost:5000/739bd864-d6d3-48a2-af3a-1a81d65d5604"};
 
-var uuid = fixture['@id'].split('/').pop();
+var uuid = fixture.id.split('/').pop();
 
 fs.writeFileSync(config.dataDir + '/' + uuid, JSON.stringify(fixture));
 

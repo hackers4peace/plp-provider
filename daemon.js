@@ -136,9 +136,9 @@ daemon.post('/', function(req, res){
   .then(storage.save)          // -> doc
   .then(function(profile){
     var min = {
-      "@context": profile["@context"],
-      "@id": profile["@id"],
-      "@type": profile["@type"]
+      "@context": profile["@context"], //TODO handle when no context
+      "id": profile.id,
+      "type": profile.type
     };
     res.type('application/ld+json');
     res.send(min);
@@ -211,7 +211,7 @@ function addUri() {
 
 function generateId(req) {
   return new Promise(function(resolve, reject){
-    req.body['@id'] = 'http://' + config.domain + '/' + UUID.v4();
+    req.body.id = 'http://' + config.domain + '/' + UUID.v4();
     resolve(req);
   });
 }
@@ -231,8 +231,6 @@ function authorize(req) {
  * 401 Unauthorized handled by express-jwt
  */
 function statusCode(error) {
-  // debug
-  //console.log('statusCode', error);
 
   var code = 500;
   if(error instanceof Errors.Authorization) code = 403;

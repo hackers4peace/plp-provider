@@ -24,175 +24,211 @@
 <div about="{{id}}" typeof="{{j type}}" class="container">
   <div class="row">
     <div id="main" class="col-md-3">
-      <h1 property="name">{{name}}</h1>
-      <img property="image" src="{{image}}" />
+      {{#if name}}
+        <h1 property="name">{{name}}</h1>
+      {{/if}}
+      {{#if image}}
+        <img property="image" src="{{image}}" />
+      {{/if}}
     </div>
-    <div class="col-md-6">
-      <p property="description">{{description}}</p>
-    </div>
+    {{#if description}}
+      <div class="col-md-6">
+        <p property="description">{{description}}</p>
+      </div>
+    {{/if}}
   </div>
   <div class="row">
     <div class="col-md-3">
       <ul id="b-day">
-        <li>
-          <span class="glyphicon glyphicon-cloud-download"></span>
-          <span property="birthDate">{{birthDate}}</span>
-        </li>
-        <li>
-          <span class="glyphicon glyphicon-forward"></span>
-          <span property="birthDate">{{birthDayParty}}</span>
-          <span class="glyphicon glyphicon-fire"></span>
-        </li>
+        {{#if birthDate}}
+          <li>
+            <span class="glyphicon glyphicon-cloud-download"></span>
+            <span property="birthDate">{{birthDate}}</span>
+          </li>
+        {{/if}}
+        {{#if birthDate}}
+          <li>
+            <span class="glyphicon glyphicon-forward"></span>
+            <span property="birthDate">{{birthDayParty}}</span>
+            <span class="glyphicon glyphicon-fire"></span>
+          </li>
+        {{/if}}
       </ul>
       <ul id="geo">
-        <li rel="homeLocation">
-          <a typeof="{{j homeLocation.type}}" href="{{homeLocation.id}}">
-            <span property="name">{{homeLocation.name}}</span>
-          </a>
-        </li>
-        <li rel="currentLocation">
-          <a typeof="{{j currentLocation.type}}" href="{{currentLocation.id}}">
-            <span property="name">{{currentLocation.name}}</span>
-          </a>
-        </p>
-      </ul>
-      <ul>
-        <li><span class="glyphicon glyphicon-certificate"></span></li>
-        {{#each sec:publicKey}}
-        <li>
-          <a property="sec:publicKey" href="{{id}}"><span property="name">{{name}}</span></a>
-        </li>
-        {{/each}}
-      </ul>
-      <ul>
-        <li><span class="glyphicon glyphicon-comment"></span></li>
-        {{#each contactPoint}}
-        <li>
-          <a rel="me" property="contactPoint" typeof="{{j type}}" href="{{id}}"><span property="name">{{name}}</span></a>
-        </li>
-        {{/each}}
-      </ul>
-      <ul>
-        <li><span class="glyphicon glyphicon-user"></span></li>
-        {{#each sameAs}}
-        <li>
-          <a rel="me" property="contactPoint" href="{{id}}"><span property="name">{{name}}</span></a>
-        </li>
-        {{/each}}
-      </ul>
-      <div class="panel panel-default">
-        <h2 class="panel-heading">
-          <span class="glyphicon glyphicon-repeat"></span>
-          habits
-        </h2>
-        <ul rel="cco:habit" class="panel-body">
-          {{#each cco:habit}}
-          <li typeof="{{j type}}">
-            <a rel="cco:topic" href="{{cco:topic.id}}" target="dbpedia">
-              <span property="name">{{cco:topic.name}}</span>
+        {{#if homeLocation}}
+          <li rel="homeLocation">
+            <a typeof="{{j homeLocation.type}}" href="{{homeLocation.id}}">
+              <span property="name">{{homeLocation.name}}</span>
             </a>
+          </li>
+        {{/if}}
+        {{#if homeLocation}}
+          <li rel="currentLocation">
+            <a typeof="{{j currentLocation.type}}" href="{{currentLocation.id}}">
+              <span property="name">{{currentLocation.name}}</span>
+            </a>
+          </li>
+        {{/if}}
+      </ul>
+      {{#if sec:publicKey}}
+        <ul>
+          <li><span class="glyphicon glyphicon-certificate"></span></li>
+          {{#each sec:publicKey}}
+          <li>
+            <a property="sec:publicKey" href="{{id}}"><span property="name">{{name}}</span></a>
           </li>
           {{/each}}
         </ul>
-      </div>
+      {{/if}}
+      {{#if contactPoin}}
+        <ul>
+          <li><span class="glyphicon glyphicon-comment"></span></li>
+          {{#each contactPoint}}
+          <li>
+            <a rel="me" property="contactPoint" typeof="{{j type}}" href="{{id}}"><span property="name">{{name}}</span></a>
+          </li>
+          {{/each}}
+        </ul>
+      {{/if}}
+      {{#if sameAs}}
+        <ul>
+          <li><span class="glyphicon glyphicon-user"></span></li>
+          {{#each sameAs}}
+          <li>
+            <a rel="me" property="contactPoint" href="{{id}}"><span property="name">{{name}}</span></a>
+          </li>
+          {{/each}}
+        </ul>
+      {{/if}}
+      {{#if cco:habit}}
+        <div class="panel panel-default">
+          <h2 class="panel-heading">
+            <span class="glyphicon glyphicon-repeat"></span>
+            habits
+          </h2>
+          <ul rel="cco:habit" class="panel-body">
+            {{#each cco:habit}}
+            <li typeof="{{j type}}">
+              <a rel="cco:topic" href="{{cco:topic.id}}" target="dbpedia">
+                <span property="name">{{cco:topic.name}}</span>
+              </a>
+            </li>
+            {{/each}}
+          </ul>
+        </div>
+      {{/if}}
     </div>
     <div class="col-md-4">
-      <div class="panel panel-default">
-        <h2 class="panel-heading">
-          <span class="glyphicon glyphicon-wrench"></span>
-          projects
-        </h2>
-        <ul rel="foaf:currentProject" class="panel-body">
-          {{#each foaf:currentProject}}
-          <li>
-            <a typeof="{{j type}}" href="{{id}}"><span property="name">{{name}}</span></a>
-          </li>
-          {{/each}}
-        </ul>
-      </div>
-      <div class="panel panel-default">
-        <h2 class="panel-heading">
-          <span class="glyphicon glyphicon-gift"></span>
-          wishlist
-        </h2>
-        <ul rel="seeks" class="panel-body">
-          {{#each seeks}}
-          <li typeof="{{j type}}">
-            <a property="itemOffered" typeof="{{j itemOffered.type}}" href="{{itemOffered.id}}"><span property="name">{{itemOffered.name}}</span></a>
-          </li>
-          {{/each}}
-        </ul>
-      </div>
-      <div class="panel panel-default">
-        <h2 class="panel-heading">
-          <span class="glyphicon glyphicon-briefcase"></span>
-          equipment
-        </h2>
-        <ul rel="owns" class="panel-body">
-          {{#each owns}}
-          <li>
-            <a typeof="{{j type}}" href="{{id}}"><span property="name">{{name}}</span></a>
-          </li>
-          {{/each}}
-        </ul>
-      </div>
+      {{#if foaf:currentProject}}
+        <div class="panel panel-default">
+          <h2 class="panel-heading">
+            <span class="glyphicon glyphicon-wrench"></span>
+            projects
+          </h2>
+          <ul rel="foaf:currentProject" class="panel-body">
+            {{#each foaf:currentProject}}
+            <li>
+              <a typeof="{{j type}}" href="{{id}}"><span property="name">{{name}}</span></a>
+            </li>
+            {{/each}}
+          </ul>
+        </div>
+      {{/if}}
+      {{#if seeks}}
+        <div class="panel panel-default">
+          <h2 class="panel-heading">
+            <span class="glyphicon glyphicon-gift"></span>
+            wishlist
+          </h2>
+          <ul rel="seeks" class="panel-body">
+            {{#each seeks}}
+            <li typeof="{{j type}}">
+              <a property="itemOffered" typeof="{{j itemOffered.type}}" href="{{itemOffered.id}}"><span property="name">{{itemOffered.name}}</span></a>
+            </li>
+            {{/each}}
+          </ul>
+        </div>
+      {{/if}}
+      {{#if owns}}
+        <div class="panel panel-default">
+          <h2 class="panel-heading">
+            <span class="glyphicon glyphicon-briefcase"></span>
+            equipment
+          </h2>
+          <ul rel="owns" class="panel-body">
+            {{#each owns}}
+            <li>
+              <a typeof="{{j type}}" href="{{id}}"><span property="name">{{name}}</span></a>
+            </li>
+            {{/each}}
+          </ul>
+        </div>
+      {{/if}}
     </div>
     <div class="col-md-5">
-      <div class="panel panel-default">
-        <h2 class="panel-heading">
-          <span class="glyphicon glyphicon-asterisk"></span>
-          affiliations
-        </h2>
-        <ul rel="member" class="panel-body">
-          {{#each member}}
-          <li>
-            <a typeof="{{j type}}" href="{{id}}"><span property="name">{{name}}</span></a>
-          </li>
-          {{/each}}
-        </ul>
-      </div>
-      <div class="panel panel-default">
-        <h2 class="panel-heading">
-          <span class="glyphicon glyphicon-calendar"></span>
-          events
-        </h2>
-        <ul rev="attendee" class="panel-body">
-          {{#each attendeeIn}}
-          <li>
-            <a typeof="{{j type}}" href="{{id}}"><span property="name">{{name}}</span></a>
-          </li>
-          {{/each}}
-        </ul>
-      </div>
-      <div class="panel panel-default">
-        <h2 class="panel-heading">
-          <span class="glyphicon glyphicon-map-marker"></span>
-          places
-        </h2>
-        <ul rel="visited" class="panel-body">
-          {{#each visited}}
-          <li>
-            <a typeof="{{j type}}" href="{{id}}"><span property="name">{{name}}</span></a>
-          </li>
-          {{/each}}
-        </ul>
-      </div>
-      <div class="panel panel-default">
-        <h2 class="panel-heading">
-          <span class="glyphicon glyphicon-screenshot"></span>
-          press
-        </h2>
-        <ul rev="about" class="panel-body">
-          {{#each subjectOf}}
-          <li>
-            <a typeof="{{j type}}" href="{{id}}">
-              <span property="name">{{name}}</span>
-              (<span property="inLanguage">{{inLanguage}}</span>)
-            </a>
-          </li>
-          {{/each}}
-        </ul>
-      </div>
+      {{#if memberOf}}
+        <div class="panel panel-default">
+          <h2 class="panel-heading">
+            <span class="glyphicon glyphicon-asterisk"></span>
+            affiliations
+          </h2>
+          <ul rev="member" class="panel-body">
+            {{#each memberOf}}
+            <li>
+              <a typeof="{{j type}}" href="{{id}}"><span property="name">{{name}}</span></a>
+            </li>
+            {{/each}}
+          </ul>
+        </div>
+      {{/if}}
+      {{#if attendeeIn}}
+        <div class="panel panel-default">
+          <h2 class="panel-heading">
+            <span class="glyphicon glyphicon-calendar"></span>
+            events
+          </h2>
+          <ul rev="attendee" class="panel-body">
+            {{#each attendeeIn}}
+            <li>
+              <a typeof="{{j type}}" href="{{id}}"><span property="name">{{name}}</span></a>
+            </li>
+            {{/each}}
+          </ul>
+        </div>
+      {{/if}}
+      {{#if visited}}
+        <div class="panel panel-default">
+          <h2 class="panel-heading">
+            <span class="glyphicon glyphicon-map-marker"></span>
+            places
+          </h2>
+          <ul rel="visited" class="panel-body">
+            {{#each visited}}
+            <li>
+              <a typeof="{{j type}}" href="{{id}}"><span property="name">{{name}}</span></a>
+            </li>
+            {{/each}}
+          </ul>
+        </div>
+      {{/if}}
+      {{#if subjectOf}}
+        <div class="panel panel-default">
+          <h2 class="panel-heading">
+            <span class="glyphicon glyphicon-screenshot"></span>
+            press
+          </h2>
+          <ul rev="about" class="panel-body">
+            {{#each subjectOf}}
+            <li>
+              <a typeof="{{j type}}" href="{{id}}">
+                <span property="name">{{name}}</span>
+                (<span property="inLanguage">{{inLanguage}}</span>)
+              </a>
+            </li>
+            {{/each}}
+          </ul>
+        </div>
+      {{/if}}
     </div>
   </div>
   <footer>
