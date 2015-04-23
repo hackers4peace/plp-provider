@@ -11,13 +11,15 @@ var Promise = require('es6-promise').Promise;
 var _ = require('lodash');
 var UUID = require('uuid');
 var request = require('superagent');
+var level = require('level');
+var forkdb = require('forkdb');
 var levelgraph = require('levelgraph');
 
 var Errors = require('./lib/errors');
 var Persona = require('./lib/persona');
 var Authorization = require('./lib/authorization');
 var Verification = require('./lib/verification');
-var FileStore = require('./lib/fileStore');
+var ForkdbStore = require('./lib/forkdbStore');
 
 var config = require('./config');
 
@@ -61,7 +63,8 @@ daemon.get('/favicon.ico', function(req, res){
 
 
 // TODO refactor storage to dataset.profiles and use LevelGraph
-var storage = new FileStore(config.dataDir);
+var db = level('tmp/fork.db');
+var storage = new ForkdbStore(forkdb(db, { dir: 'tmp/data.blob' }));
 
 var authorization = new Authorization(levelgraph(process.env.NODE_ENV || 'tmp/' + UUID.v4()));
 var verification = new Verification(storage);
@@ -129,7 +132,6 @@ daemon.get('/:uuid', function(req, res){
  * authentication handled by express-jwt
  */
 daemon.post('/', function(req, res){
-
   verification.new(req)        // -> req
   .then(generateId)            // -> req
   .then(authorization.create)  // -> doc
