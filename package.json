@@ -27,6 +27,7 @@
     "level": "^0.18.0",
     "levelgraph": "~0.10.1",
     "lodash": "~2.4.1",
+    "rdf-ext": "^0.2.2",
     "serve-static": "~1.9.2",
     "superagent": "~0.21.0",
     "uuid": "^1.4.1"

@@ -14,6 +14,7 @@ var request = require('superagent');
 var level = require('level');
 var forkdb = require('forkdb');
 var levelgraph = require('levelgraph');
+var rdf = require('rdf-ext')();
 
 var Errors = require('./lib/errors');
 var Persona = require('./lib/persona');
@@ -122,6 +123,14 @@ daemon.get('/:uuid', function(req, res){
         // handle case of array
         if(typeof type == 'object') type = type[0];
         res.render(type, doc);
+      },
+      'text/turtle': function(){
+        rdf.parseJsonLd(doc, function(graph, error) {
+          rdf.serializeTurtle(graph, function(ttl, error) {
+            res.type('text/turtle');
+            res.send(ttl);
+          });
+        });
       },
       'application/json': function(){
         res.type('application/ld+json');
