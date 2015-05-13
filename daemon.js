@@ -61,6 +61,16 @@ daemon.get('/favicon.ico', function(req, res){
   res.send(404);
 });
 
+/*
+ * 303 redirect for URLs not ending with /
+ * experimental trick for HTTPRange-14
+ * http://en.wikipedia.org/wiki/HTTPRange-14#Use_of_HTTP_Status_Code_303_See_Other
+ */
+
+daemon.get(/[^/]$/, function(req, res){
+  res.redirect(303, req.protocol + '://' + req.get('Host') + req.path + '/');
+});
+
 
 // TODO refactor storage to dataset.profiles and use LevelGraph
 var db = level('tmp/fork.db');
@@ -104,7 +114,7 @@ daemon.post('/auth/logout', function(req, res){
 });
 
 daemon.get('/:uuid', function(req, res){
-  storage.get(req.uri)          // -> doc
+  storage.get(req.uri.replace(/\/$/, ''))          // -> doc
   .then(function(doc){
     res.format({
       'text/html': function(){
@@ -186,12 +196,12 @@ module.exports = daemon;
 
 
 /**
- * GET requests don't require authentication
+ * GET and HEAD requests don't require authentication
  * attribution: http://stackoverflow.com/a/19337607/2968245
  */
 function restricted(fn) {
   return function(req, res, next) {
-    if (req.method === 'GET' || req.path.match(/\/auth/)) {
+    if (req.method === 'GET' || req.method == 'HEAD' || req.path.match(/\/auth/)) {
       next();
     } else {
       fn(req, res, next);
